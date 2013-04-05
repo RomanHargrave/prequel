@@ -10,6 +10,7 @@ import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
 import org.joda.time.format.ISODateTimeFormat
 import scala.util.matching.Regex.Match
+import java.util.regex.Matcher
 
 /**
  * Currently a private class responsible for formatting SQL used in 
@@ -24,30 +25,26 @@ class SQLFormatter(
 ) {
     private val sqlQuote = "'"
 
-    /*
-    def format( sql: String, params: Formattable* ): String = ??? //formatSeq( sql, params.toSeq )
-
-    def formatSeq( sql: String, params: Seq[ Formattable ] ): String = {
-        ??? //sql.replace("?", "%s").format( params.map( p => p.escaped( this ) ): _* )
-    }
-    */
-    
     def format( sql: String, params: Formattable* ): (String, Seq[Formattable]) = formatSeq( sql, params.toSeq )
 
+    val PlaceholderPattern = """\?\?""".r
 
-    val qq = """\?\?""".r
+    /**
+     * Formats the provided statement by escaping all parameter values and replacing every pre statement placeholder (represented by double question marks '??') with the corresponding parameter value.
+     * @param sql SQL statement with optional pre statement placeholders (represented by '??')
+     * @param params Sequence of parameters. All pre statement placeholders will be replaced by the corresponding parameter value.
+     * @return A pair consisting of the formatted statement and any parameters not already used for pre statement placeholders.
+     */
     def formatSeq( sql: String, params: Seq[ Formattable ] ): (String, Seq[Formattable]) = {
       var i = 0
       val mapper = (m: Match) => {
         if (i < params.length) {
-          val result = Some(params.apply(i).escaped(this))
+          val replacement = Some(Matcher.quoteReplacement(params.apply(i).escaped(this)))
           i = i + 1
-          result
+          replacement
         } else None
       }
-      val sql2 = qq replaceSomeIn (sql, mapper)
-
-      (sql2, params.drop(i))
+      (PlaceholderPattern replaceSomeIn(sql, mapper), params.drop(i))
     }
 
     /**
