@@ -27,12 +27,12 @@ trait ColumnTypeSpec[ T ] extends FunSpec with ShouldMatchers {
             val table = testIdentifier
 
             tx.execute( 
-                "create table ?(c1 ?, c2 ?)", 
+                "create table ??(c1 ??, c2 ??)",
                 Identifier( table ), Identifier( sqlType ), Identifier( sqlType )
             )
-            tx.execute( "insert into ? values(?, null)", Identifier( table ), testValue )
+            tx.execute( "insert into ?? values(??, null)", Identifier( table ), testValue )
 
-            tx.select( "select c1, c2 from ?", Identifier( table ) ) { row =>
+            tx.select( "select c1, c2 from ??", Identifier( table ) ) { row =>
                 columnTypeFactory(row ).nextValue should equal (testValue.value)
                 columnTypeFactory(row ).nextValueOption should be (None)
             }

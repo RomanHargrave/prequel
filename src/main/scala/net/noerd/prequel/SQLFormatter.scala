@@ -9,6 +9,7 @@ import org.joda.time.Duration
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
 import org.joda.time.format.ISODateTimeFormat
+import scala.util.matching.Regex.Match
 
 /**
  * Currently a private class responsible for formatting SQL used in 
@@ -22,13 +23,33 @@ class SQLFormatter(
     val binaryFormatter: BinaryFormatter
 ) {
     private val sqlQuote = "'"
-    
-    def format( sql: String, params: Formattable* ): String = formatSeq( sql, params.toSeq )
+
+    /*
+    def format( sql: String, params: Formattable* ): String = ??? //formatSeq( sql, params.toSeq )
 
     def formatSeq( sql: String, params: Seq[ Formattable ] ): String = {
-        sql.replace("?", "%s").format( params.map( p => p.escaped( this ) ): _* )
+        ??? //sql.replace("?", "%s").format( params.map( p => p.escaped( this ) ): _* )
     }
+    */
     
+    def format( sql: String, params: Formattable* ): (String, Seq[Formattable]) = formatSeq( sql, params.toSeq )
+
+
+    val qq = """\?\?""".r
+    def formatSeq( sql: String, params: Seq[ Formattable ] ): (String, Seq[Formattable]) = {
+      var i = 0
+      val mapper = (m: Match) => {
+        if (i < params.length) {
+          val result = Some(params.apply(i).escaped(this))
+          i = i + 1
+          result
+        } else None
+      }
+      val sql2 = qq replaceSomeIn (sql, mapper)
+
+      (sql2, params.drop(i))
+    }
+
     /**
      * Escapes  "'" and "\" in the string for use in a sql query
      */

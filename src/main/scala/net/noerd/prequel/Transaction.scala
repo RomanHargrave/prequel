@@ -202,8 +202,14 @@ class Transaction( val connection: Connection, val formatter: SQLFormatter ) {
      * @return the number of affected records
      */
     def execute( sql: String, params: Formattable* ): Int = {
+        /*
         connection.usingStatement { statement =>
             statement.executeUpdate( formatter.formatSeq( sql, params.toSeq ) )
+        }
+        */
+        val (sql2, params2) = formatter.formatSeq( sql, params.toSeq )
+        connection.usingReusableStatement( sql2, formatter, false ) { statement =>
+            statement.executeWith(params2.toSeq: _*)
         }
     }
     
@@ -243,15 +249,16 @@ class Transaction( val connection: Connection, val formatter: SQLFormatter ) {
         buffer: Option[ ArrayBuffer[T] ], 
         sql: String, params: Seq[ Formattable ]
     )( block: ( ResultSetRow ) => T ): Unit = {
-        connection.usingStatement { statement =>
-            val rs = statement.executeQuery( formatter.formatSeq( sql, params ) )
-            val append = buffer.isDefined
-            
-            while( rs.next ) {    
-                val value = block( ResultSetRow( rs ) )
-                if( append ) buffer.get.append( value )
-            }
+      val (sql2, params2) = formatter.formatSeq( sql, params.toSeq )
+      connection.usingReusableStatement(sql2, formatter, false) { statement =>
+        val rs = statement.selectWith(params2: _*)
+        val append = buffer.isDefined
+
+        while( rs.next ) {
+            val value = block( ResultSetRow( rs ) )
+            if( append ) buffer.get.append( value )
         }
+      }
     }
 }
 

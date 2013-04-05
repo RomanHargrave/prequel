@@ -13,9 +13,10 @@ class SQLFormatterSpec extends FunSpec with ShouldMatchers {
     
     describe( "SQLFormatter" ) {
         it( "should combine the parameters with the query") {
-            val expected = "insert into testtable( c1, c3, c4) values( 234, 'test', 3900000 )"
-            val actual = DefaultSQLFormatter.format(
-                "insert into ?( c1, c3, c4) values( ?, ?, ? )",
+            //val expected = "insert into testtable( c1, c3, c4) values( 234, 'test', 3900000 )"
+            val expected = "insert into testtable( c1, c3, c4) values( ?, ?, ? )"
+            val (actual, _) = DefaultSQLFormatter.format(
+                "insert into ??( c1, c3, c4) values( ?, ?, ? )",
                 Identifier( "testtable" ), 234, "test", Duration.standardMinutes( 65 )
             )
             

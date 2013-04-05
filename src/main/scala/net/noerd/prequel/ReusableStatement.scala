@@ -1,11 +1,9 @@
 package net.noerd.prequel
 
-import java.sql.Connection
-import java.sql.PreparedStatement
-import java.sql.Timestamp
-import java.sql.Types
+import java.sql._
 
 import org.joda.time.DateTime
+import scala.Array
 
 /**
  * Wrapper around PreparedStatement making is easier to add parameters.
@@ -48,12 +46,30 @@ class ReusableStatement( val wrapped: PreparedStatement, formatter: SQLFormatter
     }
 
     /**
+     * Executes the query statement with the previously set parameters
+     * @return the ResultSet of the query
+     */
+    def select(): ResultSet = {
+        parameterIndex = StartIndex
+        wrapped.executeQuery()
+    }
+
+    /**
      * Sets all parameters and executes the statement 
      * @return the number of affected records
      */
     def executeWith( params: Formattable* ): Int = {
         params.foreach( this << _ )
         execute
+    }
+
+    /**
+     * Sets all parameters and executes the query statement
+     * @return the ResultSet of the query
+     */
+    def selectWith( params: Formattable* ): ResultSet = {
+        params.foreach( this << _ )
+        select
     }
 
     /**
