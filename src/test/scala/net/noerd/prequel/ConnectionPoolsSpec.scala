@@ -21,7 +21,7 @@ class ConnectionPoolsSpec extends FunSpec with ShouldMatchers with BeforeAndAfte
   )
 
   override def beforeEach() = {
-    ConnectionPools.reset
+    ConnectionPools.reset()
   }
 
   describe("ConnectionPools") {
