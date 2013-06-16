@@ -1,5 +1,5 @@
-Prequel - SQL is enough
-=======================
+Prequel - SQL is enough (A little revisited code and capabilities)
+==================================================================
 
 There are a lot of database libraries out there. Most of them try to create a new abstraction on top of SQL. I think SQL is already a quite nice abstraction for working with data. Prequel aims to make working with this abstraction a bit more comfortable, nothing more.
 
@@ -81,7 +81,7 @@ def insertBicycles( bikes: Seq[ Bicycle ] ): Unit = {
 ```scala
 def fetchBicycles(): Seq[ Bicycles ] = {
     database.transaction { tx => 
-        tx.select( "select id, brand, release_date from bicycles" ) { r =>
+        Database(tx.connection).select( "select id, brand, release_date from bicycles" ) { r =>
             Bicycle( r, r, r )
         }
     }
@@ -93,8 +93,25 @@ def fetchBicycles(): Seq[ Bicycles ] = {
 ```scala
 def fetchBicycleCount: Long = {
     database.transaction { tx => 
-        tx.selectLong( "select count(*) from bicycles")
+        Database(tx.connection).selectLong( "select count(*) from bicycles")
     }
+}
+```
+
+## Use an external Connection
+
+```
+val conn = ...
+Database(conn).select( "select id, brand, release_date from bicycles" ) { r =>
+  Bicycle( r, r, r )
+}
+```
+
+## Use a jndi Connection from some DataSource
+
+```
+Database("jdbc/[Something]").select( "select id, brand, release_date from bicycles" ) { r =>
+  Bicycle( r, r, r )
 }
 ```
 
