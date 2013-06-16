@@ -100,7 +100,7 @@ def fetchBicycleCount: Long = {
 
 ## Use an external Connection
 
-```
+```scala
 val conn = ...
 Database(conn).select( "select id, brand, release_date from bicycles" ) { r =>
   Bicycle( r, r, r )
@@ -109,7 +109,7 @@ Database(conn).select( "select id, brand, release_date from bicycles" ) { r =>
 
 ## Use a jndi Connection from some DataSource
 
-```
+```scala
 Database("jdbc/[Something]").select( "select id, brand, release_date from bicycles" ) { r =>
   Bicycle( r, r, r )
 }
