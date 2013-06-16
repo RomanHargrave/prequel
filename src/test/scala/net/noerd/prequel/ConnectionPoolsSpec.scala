@@ -21,7 +21,7 @@ class ConnectionPoolsSpec extends FunSpec with ShouldMatchers with BeforeAndAfte
   )
 
   override def beforeEach() = {
-    ConnectionPools.reset()
+    ConnectionPools.reset
   }
 
   describe("ConnectionPools") {
@@ -29,6 +29,7 @@ class ConnectionPoolsSpec extends FunSpec with ShouldMatchers with BeforeAndAfte
     describe("getOrCreatePool") {
 
       it("should create a new pool for each unique Configuration") {
+        ConnectionPools.reset
 
         ConnectionPools.getOrCreatePool(config1)
         ConnectionPools.nbrOfPools should be(1)
