@@ -23,5 +23,5 @@ trait Formattable {
   /**
    * Should return the parameter as it is
    */
-  // def value: Any
+  def value: Any
 }
