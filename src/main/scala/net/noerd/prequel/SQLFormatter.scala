@@ -20,89 +20,104 @@ import java.util.regex.Matcher
  * See their documentation for more info on how to use them.
  */
 class SQLFormatter(
-    val timeStampFormatter: DateTimeFormatter,
-    val binaryFormatter: BinaryFormatter
-) {
-    private val sqlQuote = "'"
+                    val timeStampFormatter: DateTimeFormatter,
+                    val binaryFormatter: BinaryFormatter
+                    ) {
+  private val sqlQuote = "'"
 
-    def format( sql: String, params: Formattable* ): (String, Seq[Formattable]) = formatSeq( sql, params.toSeq )
+  def format(sql: String, params: Formattable*): (String, Seq[Formattable]) = formatSeq(sql, params.toSeq)
 
-    val PlaceholderPattern = """\?\?""".r
+  val PlaceholderPattern = """\?\?""".r
 
-    /**
-     * Formats the provided statement by escaping all parameter values and replacing every pre statement placeholder (represented by double question marks '??') with the corresponding parameter value.
-     * @param sql SQL statement with optional pre statement placeholders (represented by '??')
-     * @param params Sequence of parameters. All pre statement placeholders will be replaced by the corresponding parameter value.
-     * @return A pair consisting of the formatted statement and any parameters not already used for pre statement placeholders.
-     */
-    def formatSeq( sql: String, params: Seq[ Formattable ] ): (String, Seq[Formattable]) = {
-      var i = 0
-      val mapper = (m: Match) => {
-        if (i < params.length) {
-          val replacement = Some(Matcher.quoteReplacement(params.apply(i).escaped(this)))
-          i = i + 1
-          replacement
-        } else None
-      }
-      (PlaceholderPattern replaceSomeIn(sql, mapper), params.drop(i))
+  /**
+   * Formats the provided statement by escaping all parameter values and replacing every pre statement placeholder (represented by double question marks '??') with the corresponding parameter value.
+   * @param sql SQL statement with optional pre statement placeholders (represented by '??')
+   * @param params Sequence of parameters. All pre statement placeholders will be replaced by the corresponding parameter value.
+   * @return A pair consisting of the formatted statement and any parameters not already used for pre statement placeholders.
+   */
+  def formatSeq(sql: String, params: Seq[Formattable]): (String, Seq[Formattable]) = {
+    var i = 0
+    val mapper = (m: Match) => {
+      if (i < params.length) {
+        val replacement = Some(Matcher.quoteReplacement(params.apply(i).escaped(this)))
+        i = i + 1
+        replacement
+      } else None
     }
+    (PlaceholderPattern replaceSomeIn(sql, mapper), params.drop(i))
+  }
 
-    /**
-     * Escapes  "'" and "\" in the string for use in a sql query
-     */
-    def escapeString( str: String ): String = escapeSql( str ).replace( "\\", "\\\\" )
-    
-    /**
-     * Quotes the passed string according to the formatter 
-     */
-    def quoteString( str: String ): String = {
-        val sb = new StringBuilder
-        sb.append( sqlQuote ).append( str ).append( sqlQuote )
-        sb.toString
-    }
-    
-    /**
-     * Escapes and quotes the given string
-     */
-    def toSQLString( str: String ): String = quoteString( escapeString( str ) )
+  /**
+   * Escapes  "'" and "\" in the string for use in a sql query
+   */
+  def escapeString(str: String): String = escapeSql(str).replace("\\", "\\\\")
+
+  /**
+   * Quotes the passed string according to the formatter
+   */
+  def quoteString(str: String): String = {
+    val sb = new StringBuilder
+    sb.append(sqlQuote).append(str).append(sqlQuote)
+    sb.toString
+  }
+
+  /**
+   * Escapes and quotes the given string
+   */
+  def toSQLString(str: String): String = quoteString(escapeString(str))
 }
 
 object SQLFormatter {
-    /**
-     * SQLFormatter for dbs supporting ISODateTimeFormat
-     */
-    val DefaultSQLFormatter = SQLFormatter()
-    /**
-     * SQLFormatter for usage with HSQLDB. 
-     */
-    val HSQLDBSQLFormatter = SQLFormatter(
-        DateTimeFormat.forPattern( "yyyy-MM-dd HH:mm:ss.SSSS" )
-    )
-        
-    private[ prequel ] def apply( 
-        timeStampFormatter: DateTimeFormatter = ISODateTimeFormat.dateTimeNoMillis,
-        binaryFormatter: BinaryFormatter = new BinaryFormatter()
-    ) = {
-        new SQLFormatter( timeStampFormatter, binaryFormatter )
-    }
+  /**
+   * SQLFormatter for dbs supporting ISODateTimeFormat
+   */
+  val DefaultSQLFormatter = SQLFormatter()
+  /**
+   * SQLFormatter for usage with HSQLDB.
+   */
+  val HSQLDBSQLFormatter = SQLFormatter(
+    DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss.SSSS")
+  )
+
+  private[prequel] def apply(
+                              timeStampFormatter: DateTimeFormatter = ISODateTimeFormat.dateTimeNoMillis,
+                              binaryFormatter: BinaryFormatter = new BinaryFormatter()
+                              ) = {
+    new SQLFormatter(timeStampFormatter, binaryFormatter)
+  }
 }
 
 class BinaryFormatter {
-    /**
-     * Print to hexadecimal format
-     */
-    def print( value: Array[Byte] ): String = value.map("%02X" format _).mkString
+  /**
+   * Print to hexadecimal format
+   */
+  def print(value: Array[Byte]): String = value.map("%02X" format _).mkString
 }
 
 object SQLFormatterImplicits {
-    implicit def string2Formattable( wrapped: String ) = StringFormattable( wrapped )
-    implicit def boolean2Formattable( wrapped: Boolean ) = BooleanFormattable( wrapped )
-    implicit def long2Formattable( wrapped: Long ) = LongFormattable( wrapped )
-    implicit def int2Formattable( wrapped: Int ) = IntFormattable( wrapped )
-    implicit def float2Formattable( wrapped: Float ) = FloatFormattable( wrapped )
-    implicit def double2Formattable( wrapped: Double ) = DoubleFormattable( wrapped )
-    implicit def dateTime2Formattable( wrapped: DateTime ) = DateTimeFormattable( wrapped )
-    implicit def date2Formattable( wrapped: Date ) = DateTimeFormattable( wrapped )
-    implicit def duration2Formattable( wrapped: Duration ) = new DurationFormattable( wrapped )
-    implicit def binary2Formattable( wrapped: Array[Byte] ) = new BinaryFormattable( wrapped )
+  implicit def string2Formattable(wrapped: String) = StringFormattable(wrapped)
+
+  implicit def boolean2Formattable(wrapped: Boolean) = BooleanFormattable(wrapped)
+
+  implicit def long2Formattable(wrapped: Long) = LongFormattable(wrapped)
+
+  implicit def int2Formattable(wrapped: Int) = IntFormattable(wrapped)
+
+  implicit def float2Formattable(wrapped: Float) = FloatFormattable(wrapped)
+
+  implicit def double2Formattable(wrapped: Double) = DoubleFormattable(wrapped)
+
+  implicit def dateTime2Formattable(wrapped: DateTime) = DateTimeFormattable(wrapped)
+
+  implicit def date2Formattable(wrapped: Date) = DateTimeFormattable(wrapped)
+
+  implicit def duration2Formattable(wrapped: Duration) = new DurationFormattable(wrapped)
+
+  implicit def binary2Formattable(wrapped: Array[Byte]) = new BinaryFormattable(wrapped)
+
+  implicit def blob2Formattable[A](wrapped: java.io.InputStream) = new BlobFormattable(wrapped)
+
+  implicit def clob2Formattable[A](wrapped: java.io.Reader) = new ClobFormattable(wrapped)
+
+  implicit def null2Formattable[A](wrapped: Option[Formattable]) = new Nullable(wrapped)
 }
