@@ -21,6 +21,7 @@ import net.noerd.prequel.ResultSetRowImplicits.row2CharacterInputStream
 
 
 import org.slf4j.LoggerFactory
+import scala.util.Try
 
 final case class Database(val jndiNameOrConnection: Any) {
   val logger = LoggerFactory.getLogger("Database")
@@ -40,7 +41,7 @@ final case class Database(val jndiNameOrConnection: Any) {
   private def getConnection: java.sql.Connection = jndiNameOrConnection match {
 
     case jndiName: String => {
-      val dataSource: Option[DataSource] = {
+      /*val dataSource: Option[DataSource] = {
         try {
           Some(new InitialContext().lookup(jndiName).asInstanceOf[DataSource])
         } catch {
@@ -54,6 +55,25 @@ final case class Database(val jndiNameOrConnection: Any) {
         case None => throw new Error("Invalid jndi name!")
       }
       conn
+    }     */
+      val otherJndiName =
+        if (jndiName.startsWith("jdbc/"))
+          "java:comp/env/" + jndiName
+        else if (jndiName.startsWith("java:comp:/env/"))
+          jndiName.substring("java:comp/env/".length + 1)
+        else
+          jndiName
+      val dataSource = Try(new InitialContext().lookup(jndiName).asInstanceOf[DataSource])
+      if (dataSource.isSuccess)
+        dataSource.get.getConnection
+      else {
+        val otherDataSource = Try(new InitialContext().lookup(otherJndiName).asInstanceOf[DataSource])
+        if (otherDataSource.isSuccess)
+          otherDataSource.get.getConnection
+        else
+          throw new Error("Invalid jndi name: " + jndiName)
+      }
+
     }
     case conn: java.sql.Connection => conn
     case _ => throw new Error("jndiName or java.sql.Connection")
