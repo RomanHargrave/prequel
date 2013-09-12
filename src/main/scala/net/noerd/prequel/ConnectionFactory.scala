@@ -294,26 +294,27 @@ final case class Database(val jndiNameOrConnection: Any) {
                                     buffer: Option[ArrayBuffer[T]],
                                     sql: String, params: Seq[Formattable])(block: (ResultSetRow) => T): Unit = {
     try {
-
+      if ( closeable_? )
+        logger.debug("_selectIntoBuffer: using object : " + connection + " -> " + System.identityHashCode(connection))
       val (sql2, params2) = SQLFormatter.DefaultSQLFormatter.formatSeq(sql, params.toSeq)
-
       connection.usingReusableStatement(sql2, SQLFormatter.DefaultSQLFormatter, false) {
-        statement =>
-
-          val rs = statement.selectWith(params2: _*)
-          val append = buffer.isDefined
-
-          while (rs.next) {
-            val value = block(ResultSetRow(rs))
-            if (append) buffer.get.append(value)
-          }
-
-      }
-
+          statement =>
+            val rs = statement.selectWith(params2: _*)
+            val append = buffer.isDefined
+            while (rs.next) {
+              val value = block(ResultSetRow(rs))
+              if (append) buffer.get.append(value)
+            }
+        }
     } catch {
       case th: Throwable => {
         logger.error(th.getLocalizedMessage, th)
         throw th
+      }
+    } finally {
+      if ( closeable_? ){
+        logger.debug("_selectIntoBuffer: closing object : " + connection + " -> " + System.identityHashCode(connection))
+        connection.close
       }
     }
   }
@@ -322,13 +323,18 @@ final case class Database(val jndiNameOrConnection: Any) {
 
 
 object CloseUtil {
+  val logger = LoggerFactory.getLogger("CloseUtil")
+
   /**
    * just ensures that something with a close() method gets closed after it is used
    */
   def closeAfterUse[Closeable <: {def close() : Unit}, B](closeable: Closeable)(block: Closeable => B): B =
     try {
+      logger.debug("using object : " + closeable + " -> " + System.identityHashCode(closeable))
       block(closeable)
     } finally {
+      logger.debug("closing object : " + closeable + " -> " + System.identityHashCode(closeable))
       closeable.close()
+
     }
 }
