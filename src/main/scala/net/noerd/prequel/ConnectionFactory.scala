@@ -59,7 +59,7 @@ final case class Database(val jndiNameOrConnection: Any) {
       val otherJndiName =
         if (jndiName.startsWith("jdbc/"))
           "java:comp/env/" + jndiName
-        else if (jndiName.startsWith("java:comp:/env/"))
+        else if (jndiName.startsWith("java:comp/env/"))
           jndiName.substring("java:comp/env/".length + 1)
         else
           jndiName
