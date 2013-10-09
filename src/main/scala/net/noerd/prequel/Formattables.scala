@@ -33,7 +33,12 @@ class Nullable(val value: Option[Formattable]) extends Formattable {
   }
 
   override def addTo(statement: ReusableStatement): Unit = {
-    statement.addNull
+    value match {
+      case Some(v) =>
+        v.addTo(statement)
+      case None =>
+        statement.addNull
+    }
   }
 }
 
