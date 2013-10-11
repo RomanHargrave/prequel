@@ -31,7 +31,6 @@ Logging is enabled via slf4j api.
  * Any type of ORM voodoo (and will never be)
 
 Examples
---------
 
 Given the following import and definitions
 
