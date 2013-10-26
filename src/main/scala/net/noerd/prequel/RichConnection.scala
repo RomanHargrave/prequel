@@ -13,8 +13,9 @@ import org.slf4j.LoggerFactory
  * ReusableStatements. 
  */
 private[prequel] class RichConnection(val wrapped: Connection) {
+
   val logger = LoggerFactory.getLogger("RichConnection")
-  val sqllogger = LoggerFactory.getLogger("SQLLOG")
+  //val sqllogger = LoggerFactory.getLogger("SQLLOG")
 
   /**
    * Creates a new statement executes the given block with it.
@@ -64,7 +65,7 @@ private[prequel] class RichConnection(val wrapped: Connection) {
       }
     }
     finally {
-      sqllogger.info(sql + statement.paramsToLog + statement.timeElapsed)
+      SQLLogHandler.createLogEntry(sql, statement.paramsToLog, statement.timeElapsed)
       statement.close()
     }
   }
