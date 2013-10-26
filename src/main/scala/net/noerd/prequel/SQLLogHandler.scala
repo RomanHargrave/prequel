@@ -28,6 +28,10 @@ object SQLLogHandler {
    * drives the choice between executable or not formatted sql statement
    */
   var printExecutableSql = true
+  /**
+   * drives the choice of print or not the resultset row values
+   */
+  var printRowValues = true
 
   val loader: ClassLoader = this.getClass.getClassLoader
 
@@ -43,6 +47,7 @@ object SQLLogHandler {
         initToLog(props)
         initToTime(props)
         initPrintExcecutableSql(props)
+        initPrintRowValues(props)
       }
   }
 
@@ -77,6 +82,11 @@ object SQLLogHandler {
         log.append(time)
       sqllogger.info(log.toString)
     }
+  }
+
+  def createRowLog(row: ResultSetRow) = {
+    if(printRowValues)
+      sqllogger.info("Cursor values " + row.getRowValues)
   }
 
   /**
@@ -137,5 +147,12 @@ object SQLLogHandler {
     if (textOption.isDefined)
       if (textOption.get.equalsIgnoreCase("false"))
         printExecutableSql = false
+  }
+
+  private def initPrintRowValues(props: Properties) {
+    val textOption = Option(props.getProperty("prequelous.row-print"))
+    if (textOption.isDefined)
+      if (textOption.get.equalsIgnoreCase("false"))
+        printRowValues = false
   }
 }

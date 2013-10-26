@@ -2,7 +2,7 @@ package net.noerd.prequel
 
 import java.util.Date
 
-import java.sql.ResultSet
+import java.sql.{ResultSetMetaData, ResultSet}
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -14,6 +14,11 @@ import scala.collection.mutable.ArrayBuffer
  * the optional value of the next column.
  */
 class ResultSetRow(val rs: ResultSet) {
+
+  private val text = ArrayBuffer[String]()
+
+  lazy val rowValues = "{" + text.mkString(",") + "}"
+
   /** Maintain the current position. */
   private var position = 0
 
@@ -39,7 +44,7 @@ class ResultSetRow(val rs: ResultSet) {
 
   def nextClob: Option[java.io.InputStream] = nextValueOption(rs.getAsciiStream)
 
-  def columnNames: Seq[String] = {
+  val columnNames: ArrayBuffer[String] = {
     val columnNames = ArrayBuffer.empty[String]
     val metaData = rs.getMetaData
     for (index <- 0.until(metaData.getColumnCount)) {
@@ -55,8 +60,23 @@ class ResultSetRow(val rs: ResultSet) {
   private def nextValueOption[T](f: (Int) => T): Option[T] = {
     incrementPosition
     val value = f(position)
-    if (rs.wasNull) None
-    else Some(value)
+    if (rs.wasNull) {
+      None
+    }else{
+      Some(value)
+    }
+  }
+
+  def getRowValues = {
+    val s: StringBuffer = new StringBuffer(" {")
+    val md: ResultSetMetaData = rs.getMetaData
+    if (md.getColumnCount > 0){
+      s.append(columnNames(0) + ": " + rs.getObject(1))
+      (2 to md.getColumnCount) foreach { i =>
+        s.append(", ").append(columnNames(i - 1) + ": " + rs.getObject(i))
+      }
+    }
+    s.append("}").toString
   }
 }
 
@@ -65,6 +85,7 @@ object ResultSetRow {
   def apply(rs: ResultSet): ResultSetRow = {
     new ResultSetRow(rs)
   }
+
 }
 
 /**
