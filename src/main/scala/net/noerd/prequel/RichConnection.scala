@@ -64,8 +64,10 @@ private[prequel] class RichConnection(val wrapped: Connection) {
       }
     }
     finally {
-      //SQLLogHandler.createLogEntry(sql, statement.paramsToLog, statement.timeElapsed)
-      SQLLogHandler.createLogEntry(sql, statement.paramsForSQLLog, statement.timeElapsed)
+      if (SQLLogHandler.printExecutableSql )
+        SQLLogHandler.createLogEntry(sql, statement.paramsForSQLLog, statement.timeElapsed)
+      else
+        SQLLogHandler.createLogEntry(sql, statement.paramsToLog, statement.timeElapsed)
       statement.close()
     }
   }

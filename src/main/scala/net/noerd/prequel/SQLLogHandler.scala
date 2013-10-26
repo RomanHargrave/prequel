@@ -24,6 +24,10 @@ object SQLLogHandler {
    * drives this class to print the time elapsed or not based on the property 'toTime' in file 'prequelous.properties'
    */
   var toTime = true
+  /**
+   * drives the choice between executable or not formatted sql statement
+   */
+  var printExecutableSql = true
 
   val loader: ClassLoader = this.getClass.getClassLoader
 
@@ -35,8 +39,10 @@ object SQLLogHandler {
       val props = new Properties(System.getProperties)
       if (in != null) {
         props.load(in)
-        if (props.getProperty("prequelous.text").equalsIgnoreCase("false")) toLog = false
-        if (props.getProperty("prequelous.time").equalsIgnoreCase("false")) toTime = false
+
+        initToLog(props)
+        initToTime(props)
+        initPrintExcecutableSql(props)
       }
   }
 
@@ -112,6 +118,24 @@ object SQLLogHandler {
     case Some(p) => p.escaped(SQLFormatter.DefaultSQLFormatter)
   }
 
+  private def initToLog(props: Properties) {
+    val textOption = Option(props.getProperty("prequelous.text"))
+    if (textOption.isDefined)
+      if (textOption.get.equalsIgnoreCase("false"))
+        toLog = false
+  }
 
+  private def initToTime(props: Properties) {
+    val textOption = Option(props.getProperty("prequelous.time"))
+    if (textOption.isDefined)
+      if (textOption.get.equalsIgnoreCase("false"))
+        toTime = false
+  }
 
+  private def initPrintExcecutableSql(props: Properties) {
+    val textOption = Option(props.getProperty("prequelous.executable-log-format"))
+    if (textOption.isDefined)
+      if (textOption.get.equalsIgnoreCase("false"))
+        printExecutableSql = false
+  }
 }
