@@ -1,4 +1,4 @@
-Prequel - SQL is enough (A little revisited code and capabilities)
+Prequelous - SQL is enough (A little revisited code and capabilities)
 ==================================================================
 
 There are a lot of database libraries out there. Most of them try to create a new abstraction on top of SQL. I think SQL is already a quite nice abstraction for working with data. Prequel aims to make working with this abstraction a bit more comfortable, nothing more.
@@ -7,15 +7,15 @@ There are a lot of database libraries out there. Most of them try to create a ne
 
 ### Background
 
-Prequel is a small set of classes making handling of SQL queries in Scala a bit easier. It takes care of connection handling/pooling, sql escaping, parameter conversion and to some extent transaction handling.
+Prequelous is a small set of classes making handling of SQL queries in Scala a bit easier. It takes care of connection handling/pooling, sql escaping, parameter conversion and to some extent transaction handling.
 
-Prequel was written by  [Johan Persson](https://github.com/jpersson) since he was not really happy with what I could find in terms of jdbc based database libraries. The library is heavily inspired by projects like [Querulous](https://github.com/nkallen/querulous), [Simplifying JDBC](http://scala.sygneca.com/code/simplifying-jdbc) and unreleased work of [Tristan Juricek](https://github.com/tristanjuricek).
+Prequel was written by  [Johan Persson](https://github.com/jpersson) since he was not really happy with what he could find in terms of jdbc based database libraries. The library is heavily inspired by projects like [Querulous](https://github.com/nkallen/querulous), [Simplifying JDBC](http://scala.sygneca.com/code/simplifying-jdbc) and unreleased work of [Tristan Juricek](https://github.com/tristanjuricek).
 
-See example below how prequel can make your life easier.
+See example below how prequelous can make your life easier.
 
 ### Database Compatibility
 
-Prequel should be compatible with most JDBC supported databases. I've only tested it using HSQLDB and PostgreSQL but MySQL and others should work fine. I [Giovanni Caruso](https://github.com/vannicaruso) tested it with oracle 11g v. 11.2.0.2 too.
+Prequelous should be compatible with most JDBC supported databases. He has only tested it using HSQLDB and PostgreSQL but MySQL and others should work fine. I [Giovanni Caruso](https://github.com/vannicaruso) tested it with oracle 11g v. 11.2.0.2 too.
 
 ### Use at your own risk
 
@@ -24,6 +24,27 @@ Although I'm using this library in my own projects I have not tested it with mas
 ### Logging
 
 Logging is enabled via slf4j api.
+
+Now you can configure its behaviour through a configuration file.
+
+Prequelous searches for a file named prequelous.properties in the classpath of the application.
+
+This is an example:
+
+    # will log Reader object's content for PreparedStatement and ResultSet if this parameter set to 'true' value. default is true
+    prequelous.text=true
+    # will show elapsed time. default is true
+    prequelous.time=true
+    # will print executable or not SQL (default true)
+    prequelous.executable-log-format=true
+
+It can log executable sql, such this:
+
+    2013-10-26 22:06:02,740 [main] INFO  SQLLOG - insert into float_table values(1.500000, null); - { time: 32 ms }
+
+TODO:
+External file configuration
+log resultset values
 
 ### Not supported
 
@@ -47,7 +68,7 @@ val database = DatabaseConfig(
 )
 ```
 
-Prequel makes it quite comfortable for you to do:
+Prequelous makes it quite comfortable for you to do:
 
 ## Inserts
 
@@ -117,7 +138,7 @@ Database("jdbc/[Something]").select( "select id, brand, release_date from bicycl
 Use in your Project
 -------------------
 
-This version is not published so to use in your projects you have to clone repository and build by yourself.
+In the section [releases](https://github.com/vannicaruso/prequel/releases) you can download a fat jar containing this project plus all the classes needed by prequelous itself.
 
 
 Dependencies
