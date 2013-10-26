@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory
  * ReusableStatements. 
  */
 private[prequel] class RichConnection(val wrapped: Connection) {
+
   val logger = LoggerFactory.getLogger("RichConnection")
 
   /**
@@ -63,6 +64,10 @@ private[prequel] class RichConnection(val wrapped: Connection) {
       }
     }
     finally {
+      if (SQLLogHandler.printExecutableSql )
+        SQLLogHandler.createLogEntry(sql, statement.paramsForSQLLog, statement.timeElapsed)
+      else
+        SQLLogHandler.createLogEntry(sql, statement.paramsToLog, statement.timeElapsed)
       statement.close()
     }
   }
