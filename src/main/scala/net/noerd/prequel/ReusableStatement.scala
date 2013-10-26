@@ -4,6 +4,7 @@ import java.sql._
 
 import org.joda.time.DateTime
 import scala.Array
+import scala.collection.mutable.ArrayBuffer
 
 /**
  * Wrapper around PreparedStatement making is easier to add parameters.
@@ -19,6 +20,29 @@ import scala.Array
 class ReusableStatement(val wrapped: PreparedStatement, formatter: SQLFormatter) {
   private val StartIndex = 1
   private var parameterIndex = StartIndex
+
+
+  /**
+   * Parameters to be logged
+   */
+  private val params = ArrayBuffer[String]()
+
+  /**
+   * The string representing the params to be logged
+   * @return The escaped params collection
+   */
+  lazy val paramsToLog = if (params.size == 0) "" else " - params: {" + params.mkString(" , ") + "}"
+
+  var timeElapsed = ""
+
+  def time[R](f: => R): (R, Long) = {
+    timeElapsed = ""
+    val t0 = System.nanoTime
+    val r = f
+    val t1 = System.nanoTime
+    timeElapsed = " - { time: " + ((t1 - t0) / 1000) + " ms }"
+    (r, t1 - t0)
+  }
 
   /**
    * Adds the param to the query and returns this so that it
@@ -42,7 +66,9 @@ class ReusableStatement(val wrapped: PreparedStatement, formatter: SQLFormatter)
    */
   def execute(): Int = {
     parameterIndex = StartIndex
-    wrapped.executeUpdate()
+    time {
+      wrapped.executeUpdate()
+    }._1
   }
 
   /**
@@ -51,7 +77,9 @@ class ReusableStatement(val wrapped: PreparedStatement, formatter: SQLFormatter)
    */
   def select(): ResultSet = {
     parameterIndex = StartIndex
-    wrapped.executeQuery()
+    time {
+      wrapped.executeQuery()
+    }._1
   }
 
   /**
@@ -75,62 +103,95 @@ class ReusableStatement(val wrapped: PreparedStatement, formatter: SQLFormatter)
   /**
    * Add a String to the current parameter index
    */
-  def addString(value: String) = addValue(() =>
-    wrapped.setString(parameterIndex, formatter.escapeString(value))
-  )
+  def addString(value: String) = {
+    params += formatter.escapeString(value)
+    addValue(() =>
+      wrapped.setString(parameterIndex, formatter.escapeString(value))
+    )
+  }
 
   /**
    * Add a Date to the current parameter index. This is done by setTimestamp which
    * looses the Timezone information of the DateTime
    */
-  def addDateTime(value: DateTime): Unit = addValue(() =>
-    wrapped.setTimestamp(parameterIndex, new Timestamp(value.getMillis))
-  )
+  def addDateTime(value: DateTime): Unit = {
+    params += new Timestamp(value.getMillis).toString
+    addValue(() =>
+      wrapped.setTimestamp(parameterIndex, new Timestamp(value.getMillis))
+    )
+  }
 
   /**
    * Add Blob (stream of bytes) to the current parameter index
    */
-  def addBlob(value: java.io.InputStream): Unit = addValue(() => wrapped.setBinaryStream(parameterIndex, value))
+  def addBlob(value: java.io.InputStream): Unit = {
+    params += value.toString
+    addValue(() => wrapped.setBinaryStream(parameterIndex, value))
+  }
 
   /**
    * Add Clob (stream of characters) to the current parameter index
    */
-  def addClob(value: java.io.Reader): Unit = addValue(() => wrapped.setCharacterStream(parameterIndex, value))
+  def addClob(value: java.io.Reader): Unit = {
+    params += value.toString
+    addValue(() => wrapped.setCharacterStream(parameterIndex, value))
+  }
 
   /**
    * Add Binary (array of bytes) to the current parameter index
    */
-  def addBinary(value: Array[Byte]): Unit = addValue(() => wrapped.setBytes(parameterIndex, value))
+  def addBinary(value: Array[Byte]): Unit = {
+    params += value.toString
+    addValue(() => wrapped.setBytes(parameterIndex, value))
+  }
 
   /**
    * Add a Boolean to the current parameter index
    */
-  def addBoolean(value: Boolean): Unit = addValue(() => wrapped.setBoolean(parameterIndex, value))
+  def addBoolean(value: Boolean): Unit = {
+    params += value.toString
+    addValue(() => wrapped.setBoolean(parameterIndex, value))
+  }
 
   /**
    * Add a Long to the current parameter index
    */
-  def addLong(value: Long): Unit = addValue(() => wrapped.setLong(parameterIndex, value))
+  def addLong(value: Long): Unit = {
+    params += value.toString
+    addValue(() => wrapped.setLong(parameterIndex, value))
+  }
 
   /**
    * Add a Int to the current parameter index
    */
-  def addInt(value: Int): Unit = addValue(() => wrapped.setInt(parameterIndex, value))
+  def addInt(value: Int): Unit = {
+    params += value.toString
+    addValue(() => wrapped.setInt(parameterIndex, value))
+  }
 
   /**
    * Add a Float to the current parameter index
    */
-  def addFloat(value: Float): Unit = addValue(() => wrapped.setFloat(parameterIndex, value))
+  def addFloat(value: Float): Unit = {
+    params += value.toString
+    addValue(() => wrapped.setFloat(parameterIndex, value))
+  }
 
   /**
    * Add a Double to the current parameter index
    */
-  def addDouble(value: Double): Unit = addValue(() => wrapped.setDouble(parameterIndex, value))
+  def addDouble(value: Double): Unit = {
+    params += value.toString
+    addValue(() => wrapped.setDouble(parameterIndex, value))
+  }
 
   /**
    * Add Null to the current parameter index
    */
-  def addNull(): Unit = addValue(() => wrapped.setNull(parameterIndex, Types.NULL))
+  def addNull(): Unit = {
+    params += "null"
+    addValue(() => wrapped.setNull(parameterIndex, Types.NULL))
+  }
 
 
   private def addValue(f: () => Unit) = {
