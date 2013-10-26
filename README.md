@@ -42,9 +42,10 @@ It can log executable sql, such this:
 
     2013-10-26 22:06:02,740 [main] INFO  SQLLOG - insert into float_table values(1.500000, null); - { time: 32 ms }
 
-TODO:
-External file configuration
-log resultset values
+### TODO
+
+ * External file configuration
+ * log resultset values
 
 ### Not supported
 
@@ -52,6 +53,7 @@ log resultset values
  * Any type of ORM voodoo (and will never be)
 
 Examples
+--------
 
 Given the following import and definitions
 
