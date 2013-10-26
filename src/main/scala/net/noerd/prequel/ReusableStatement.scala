@@ -27,6 +27,11 @@ class ReusableStatement(val wrapped: PreparedStatement, formatter: SQLFormatter)
    */
   private val params = ArrayBuffer[String]()
 
+
+  val params2 = ArrayBuffer[Formattable]()
+  lazy val paramsForSQLLog = params2.toList.zipWithIndex.map{ case (f: Formattable, idx: Int) => (idx + 1, f)}.toMap
+
+
   /**
    * The string representing the params to be logged
    * @return The escaped params collection
@@ -50,6 +55,7 @@ class ReusableStatement(val wrapped: PreparedStatement, formatter: SQLFormatter)
    * @return self to allow for chaining calls
    */
   def <<(param: Formattable): ReusableStatement = {
+    params2 += param
     param.addTo(this)
     this
   }
