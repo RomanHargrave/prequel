@@ -2,7 +2,7 @@ package net.noerd.prequel
 
 import java.util.Date
 
-import java.sql.{ResultSetMetaData, ResultSet}
+import java.sql.{Time, ResultSetMetaData, ResultSet}
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -11,7 +11,7 @@ import scala.collection.mutable.ArrayBuffer
  * Wraps a ResultSet in a row context. The ResultSetRow gives access
  * to the current row with no possibility to change row. The data of
  * the row can be accessed though the next<Type> methods which return
- * the optional value of the next column.
+ * the optional value of the next column, or through its column name.
  */
 class ResultSetRow(val rs: ResultSet) {
 
@@ -44,6 +44,29 @@ class ResultSetRow(val rs: ResultSet) {
 
   def nextClob: Option[java.io.InputStream] = nextValueOption(rs.getAsciiStream)
 
+  def columnBoolean(columnName: String): Option[ Boolean ] = columnValueOption(columnName, rs.getBoolean )
+
+  def columnInt(columnName: String): Option[ Int ] = columnValueOption(columnName, rs.getInt )
+
+  def columnLong(columnName: String): Option[ Long ] = columnValueOption(columnName, rs.getLong )
+
+  def columnFloat(columnName: String): Option[ Float ] = columnValueOption(columnName, rs.getFloat )
+
+  def columnDouble(columnName: String): Option[ Double ] = columnValueOption(columnName, rs.getDouble )
+
+  def columnString(columnName: String): Option[ String ] = columnValueOption(columnName, rs.getString )
+
+  def columnDate(columnName: String): Option[ Date ] =  columnValueOption(columnName, rs.getTimestamp )
+
+  def columnObject(columnName: String): Option[ AnyRef ] = columnValueOption(columnName, rs.getObject )
+
+  def columnBinary(columnName: String): Option[Array[Byte]] = columnValueOption(columnName, rs.getBytes)
+
+  def columnBlob(columnName: String): Option[java.io.InputStream] = columnValueOption(columnName, rs.getBinaryStream)
+
+  def columnClob(columnName: String): Option[java.io.InputStream] = columnValueOption(columnName, rs.getAsciiStream)
+
+
   val columnNames: ArrayBuffer[String] = {
     val columnNames = ArrayBuffer.empty[String]
     val metaData = rs.getMetaData
@@ -67,6 +90,12 @@ class ResultSetRow(val rs: ResultSet) {
     }
   }
 
+  def columnValueOption[T](columnName:String, f: (String) => T ): Option[ T ] = {
+    val value = f(columnName)
+    if( rs.wasNull ) None
+    else Some( value )
+  }
+
   def getRowValues = {
     val s: StringBuffer = new StringBuffer(" {")
     val md: ResultSetMetaData = rs.getMetaData
@@ -87,6 +116,8 @@ object ResultSetRow {
   }
 
 }
+
+case class Column(name: String)
 
 /**
  * Defines a number of implicit conversion methods for the supported ColumnTypes. A call
@@ -156,4 +187,29 @@ object ResultSetRowImplicits {
   implicit def row2InputStreamOption(row: ResultSetRow) = BlobColumnType(row).nextValue
 
   implicit def row2CharacterInputStreamOption(row: ResultSetRow) = ClobColumnType(row).nextValue
+}
+
+object ResultSetRowColumnImplicits {
+  implicit def row2Boolean( column: Column )(implicit row: ResultSetRow) = BooleanColumnType( row ).columnValue(column.name)
+  implicit def row2Int( column: Column )(implicit row: ResultSetRow): Int = IntColumnType( row ).columnValue(column.name)
+  implicit def row2Long( column: Column )(implicit row: ResultSetRow): Long = LongColumnType( row ).columnValue(column.name)
+  implicit def row2Float( column: Column )(implicit row: ResultSetRow) = FloatColumnType( row ).columnValue(column.name)
+  implicit def row2Double( column: Column )(implicit row: ResultSetRow) = DoubleColumnType( row ).columnValue(column.name)
+
+  implicit def row2String( column: Column )(implicit row: ResultSetRow) = StringColumnType( row ).columnValue(column.name)
+  implicit def row2Date( column: Column )(implicit row: ResultSetRow) = DateColumnType( row ).columnValue(column.name)
+  implicit def row2DateTime( column: Column )(implicit row: ResultSetRow) = DateTimeColumnType( row ).columnValue(column.name)
+
+  implicit def row2Duration( column: Column )(implicit row: ResultSetRow) = DurationColumnType( row ).columnValue(column.name)
+
+  implicit def row2BooleanOption( column: Column )(implicit row: ResultSetRow) = BooleanColumnType( row ).columnValueOption(column.name)
+  implicit def row2IntOption( column: Column )(implicit row: ResultSetRow) = IntColumnType( row ).columnValueOption(column.name)
+  implicit def row2LongOption( column: Column )(implicit row: ResultSetRow) = LongColumnType( row ).columnValueOption(column.name)
+  implicit def row2FloatOption( column: Column )(implicit row: ResultSetRow) = FloatColumnType( row ).columnValueOption(column.name)
+  implicit def row2DoubleOption( column: Column )(implicit row: ResultSetRow) = DoubleColumnType( row ).columnValueOption(column.name)
+
+  implicit def row2StringOption( column: Column )(implicit row: ResultSetRow) = StringColumnType( row ).columnValueOption(column.name)
+  implicit def row2DateOption( column: Column )(implicit row: ResultSetRow) = DateColumnType( row ).columnValueOption(column.name)
+  implicit def row2DateTimeOption( column: Column )(implicit row: ResultSetRow) = DateTimeColumnType( row ).columnValueOption(column.name)
+  implicit def row2DurationOption( column: Column )(implicit row: ResultSetRow) = DurationColumnType( row ).columnValueOption(column.name)
 }

@@ -14,6 +14,13 @@ trait ColumnType[T] {
   )
 
   /**
+   * @throws RunTimeException if the value was null
+   */
+  def columnValue(columnName: String): T = columnValueOption(columnName).getOrElse(
+    sys.error( "unexpected null value")
+  )
+
+  /**
    * To be implemented. Should return Some if the value
    * of the current column is not null, if it is return
    * None.
@@ -22,6 +29,16 @@ trait ColumnType[T] {
    *                   the implementing type.
    */
   def nextValueOption: Option[T]
+
+  /**
+   * To be implemented. Should return Some if the value
+   * of the current column is not null, if it is return
+   * None.
+   *
+   * @throws Exception if the column could not be intepreted as
+   *                   the implementing type.
+   */
+  def columnValueOption(columnName: String): Option[ T ]
 }
 
 trait ColumnTypeFactory[T] {
