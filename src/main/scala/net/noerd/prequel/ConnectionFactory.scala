@@ -303,7 +303,7 @@ final case class Database(val jndiNameOrConnection: Any) {
             while (rs.next) {
               val row = ResultSetRow(rs)
               val value = block(row)
-              SQLLogHandler.createRowLog(row)
+              SQLLogHandler.createRowLog(row, sql, statement.paramsForSQLLog)
               if (append) buffer.get.append(value)
             }
         }

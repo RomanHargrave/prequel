@@ -119,7 +119,8 @@ object ResultSetRowImplicits {
 
   implicit def row2String(row: ResultSetRow) = StringColumnType(row).nextValue
 
-  implicit def row2Date(row: ResultSetRow) = DateColumnType(row).nextValue
+  implicit def row2Date(row: ResultSetRow) = DateTimeColumnType(row).nextValue
+  //implicit def row2Date(row: ResultSetRow) = DateColumnType(row).nextValue
 
   implicit def row2DateTime(row: ResultSetRow) = DateTimeColumnType(row).nextValue
 

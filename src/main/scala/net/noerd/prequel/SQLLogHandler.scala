@@ -5,6 +5,7 @@ import java.util.Properties
 import org.slf4j.LoggerFactory
 import java.util.regex.{Matcher, Pattern}
 import scala.StringBuilder
+import java.text.SimpleDateFormat
 
 /**
  * Created with IntelliJ IDEA.
@@ -84,9 +85,14 @@ object SQLLogHandler {
     }
   }
 
+  def createRowLog(row: ResultSetRow, sql: String, params: scala.collection.immutable.Map[Int, Formattable]) = {
+    if(printRowValues)
+      sqllogger.info("Cursor read for sql {" + createSqlLogEntry(sql,params) + "} --> " + row.getRowValues)
+  }
+
   def createRowLog(row: ResultSetRow) = {
     if(printRowValues)
-      sqllogger.info("Cursor values " + row.getRowValues)
+      sqllogger.info("Cursor values: " +  row.getRowValues)
   }
 
   /**
@@ -124,7 +130,7 @@ object SQLLogHandler {
   def formatParameter(param: Option[Formattable]): String =
     param match {
     case None => "null"
-    case Some(p) if p.isInstanceOf[DateTimeFormattable] => "to_timestamp(" + p.escaped(SQLFormatter.DefaultSQLFormatter) + ", 'yyyy-MM-dd hh24:mi:ss.ff3')"
+    case Some(p) if p.isInstanceOf[DateTimeFormattable] => "to_timestamp(" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(p.asInstanceOf[DateTimeFormattable].value.toDate) + ", 'yyyy-MM-dd hh24:mi:ss.ff3')"
     case Some(p) => p.escaped(SQLFormatter.DefaultSQLFormatter)
   }
 

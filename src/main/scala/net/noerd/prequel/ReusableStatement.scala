@@ -128,6 +128,17 @@ class ReusableStatement(val wrapped: PreparedStatement, formatter: SQLFormatter)
   }
 
   /**
+   * Add a Date to the current parameter index. This is done by setTimestamp which
+   * looses the Timezone information of the DateTime
+   */
+  def addDate(value: Date): Unit = {
+    params += new Timestamp(value.getTime).toString
+    addValue(() =>
+      wrapped.setDate(parameterIndex, value)
+    )
+  }
+
+  /**
    * Add Blob (stream of bytes) to the current parameter index
    */
   def addBlob(value: java.io.InputStream): Unit = {
