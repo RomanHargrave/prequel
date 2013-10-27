@@ -10,6 +10,7 @@ import org.joda.time.Duration
 //
 class StringColumnType(row: ResultSetRow) extends ColumnType[String] {
   override def nextValueOption: Option[String] = row.nextString
+  override def columnValueOption(columnName: String): Option[ String ] = row.columnString(columnName)
 }
 
 object StringColumnType extends ColumnTypeFactory[String] {
@@ -21,6 +22,7 @@ object StringColumnType extends ColumnTypeFactory[String] {
 // 
 class BooleanColumnType(row: ResultSetRow) extends ColumnType[Boolean] {
   override def nextValueOption: Option[Boolean] = row.nextBoolean
+  override def columnValueOption(columnName: String): Option[ Boolean ] = row.columnBoolean(columnName)
 }
 
 object BooleanColumnType extends ColumnTypeFactory[Boolean] {
@@ -32,6 +34,7 @@ object BooleanColumnType extends ColumnTypeFactory[Boolean] {
 //
 class LongColumnType(row: ResultSetRow) extends ColumnType[Long] {
   override def nextValueOption: Option[Long] = row.nextLong
+  override def columnValueOption(columnName: String): Option[ Long ] = row.columnLong(columnName)
 }
 
 object LongColumnType extends ColumnTypeFactory[Long] {
@@ -43,6 +46,7 @@ object LongColumnType extends ColumnTypeFactory[Long] {
 //
 class IntColumnType(row: ResultSetRow) extends ColumnType[Int] {
   override def nextValueOption: Option[Int] = row.nextInt
+  override def columnValueOption(columnName: String): Option[ Int ] = row.columnInt(columnName)
 }
 
 object IntColumnType extends ColumnTypeFactory[Int] {
@@ -54,6 +58,7 @@ object IntColumnType extends ColumnTypeFactory[Int] {
 //
 class FloatColumnType(row: ResultSetRow) extends ColumnType[Float] {
   override def nextValueOption: Option[Float] = row.nextFloat
+  override def columnValueOption(columnName: String): Option[ Float ] = row.columnFloat(columnName)
 }
 
 object FloatColumnType extends ColumnTypeFactory[Float] {
@@ -65,6 +70,7 @@ object FloatColumnType extends ColumnTypeFactory[Float] {
 //
 class DoubleColumnType(row: ResultSetRow) extends ColumnType[Double] {
   override def nextValueOption: Option[Double] = row.nextDouble
+  override def columnValueOption(columnName: String): Option[ Double ] = row.columnDouble(columnName)
 }
 
 object DoubleColumnType extends ColumnTypeFactory[Double] {
@@ -76,6 +82,7 @@ object DoubleColumnType extends ColumnTypeFactory[Double] {
 //
 class DateTimeColumnType(row: ResultSetRow) extends ColumnType[DateTime] {
   override def nextValueOption: Option[DateTime] = row.nextDate.map(d => new DateTime(d.getTime))
+  override def columnValueOption(columnName: String): Option[ DateTime ] = row.columnDate(columnName).map( d => new DateTime( d.getTime ) )
 }
 
 object DateTimeColumnType extends ColumnTypeFactory[DateTime] {
@@ -84,6 +91,7 @@ object DateTimeColumnType extends ColumnTypeFactory[DateTime] {
 
 class DateColumnType(row: ResultSetRow) extends ColumnType[Date] {
   override def nextValueOption: Option[Date] = row.nextDate
+  override def columnValueOption(columnName: String): Option[ Date ] = row.columnDate(columnName)
 }
 
 object DateColumnType extends ColumnTypeFactory[Date] {
@@ -95,6 +103,7 @@ object DateColumnType extends ColumnTypeFactory[Date] {
 //
 class DurationColumnType(row: ResultSetRow) extends ColumnType[Duration] {
   override def nextValueOption: Option[Duration] = row.nextLong.map(new Duration(_))
+  override def columnValueOption(columnName: String): Option[ Duration ] = row.columnLong(columnName).map( new Duration( _ ) )
 }
 
 object DurationColumnType extends ColumnTypeFactory[Duration] {
@@ -108,6 +117,7 @@ object DurationColumnType extends ColumnTypeFactory[Duration] {
 
 class BinaryColumnType(row: ResultSetRow) extends ColumnType[Array[Byte]] {
   override def nextValueOption: Option[Array[Byte]] = row.nextBinary
+  override def columnValueOption(columnName: String): Option[Array[Byte]] = row.columnBinary(columnName)
 }
 
 object BinaryColumnType extends ColumnTypeFactory[Array[Byte]] {
@@ -120,6 +130,7 @@ object BinaryColumnType extends ColumnTypeFactory[Array[Byte]] {
 
 class BlobColumnType(row: ResultSetRow) extends ColumnType[java.io.InputStream] {
   override def nextValueOption: Option[java.io.InputStream] = row.nextBlob
+  override def columnValueOption(columnName: String): Option[java.io.InputStream] = row.columnBlob(columnName)
 }
 
 object BlobColumnType extends ColumnTypeFactory[java.io.InputStream] {
@@ -132,6 +143,7 @@ object BlobColumnType extends ColumnTypeFactory[java.io.InputStream] {
 
 class ClobColumnType(row: ResultSetRow) extends ColumnType[java.io.InputStream] {
   override def nextValueOption: Option[java.io.InputStream] = row.nextClob
+  override def columnValueOption(columnName: String): Option[java.io.InputStream] = row.columnBlob(columnName)
 }
 
 object ClobColumnType extends ColumnTypeFactory[java.io.InputStream] {

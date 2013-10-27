@@ -232,6 +232,30 @@ class TransactionSpec extends FunSpec with ShouldMatchers with BeforeAndAfterEac
         }
       }
 
+      it( "should handle nullable columns correctly" ) {
+        case class Item( v1: Long, v2: Option[String] )
+
+        val items = List( Item( 1001, Some( "foo" ) ), Item( 1002, None ) )
+        val strNullable = (x:Option[String]) => Nullable(x.map(StringFormattable(_)))
+
+        database.transaction { tx =>
+          tx.executeBatch( "insert into transactionspec values(?, ?)" ) { statement =>
+            items.foreach { item =>
+              statement << item.v1 << Nullable(item.v2.map(StringFormattable(_))) <<!
+            }
+          }
+        }
+
+        database.transaction { tx =>
+          val rs = Database(tx.connection).select( "select id, name from transactionspec where id > 1000" ) { row =>
+            Item( row, row )
+          }
+
+          rs should contain (items.head)
+          rs should contain (items.last)
+        }
+      }
+
     }
   }
 }
