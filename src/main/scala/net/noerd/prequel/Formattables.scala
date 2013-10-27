@@ -180,6 +180,30 @@ object DateTimeFormattable {
 }
 
 //
+// Date
+//
+/*class DateFormattable(val value: Date)
+  extends Formattable {
+  override def escaped(formatter: SQLFormatter): String = {
+    value.getTime.toString
+  }
+
+  override def addTo(statement: ReusableStatement): Unit = {
+    statement.addDate(new java.sql.Date(value.getTime))
+  }
+}
+
+object DateFormattable {
+  def apply(value: DateTime) = {
+    new DateTimeFormattable(value)
+  }
+
+  def apply(value: Date) = {
+    new DateFormattable(value)
+  }
+} */
+
+//
 // Duration
 //
 /**

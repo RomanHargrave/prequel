@@ -6,6 +6,7 @@ import org.scalatest.FunSpec
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.BeforeAndAfterEach
 import net.noerd.prequel.SQLFormatterImplicits._
+import java.sql.Timestamp
 
 class ResultSetRowSpec extends FunSpec with ShouldMatchers with BeforeAndAfterEach {
 

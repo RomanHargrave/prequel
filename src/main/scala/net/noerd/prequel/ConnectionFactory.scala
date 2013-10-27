@@ -301,7 +301,9 @@ final case class Database(val jndiNameOrConnection: Any) {
             val rs = statement.selectWith(params2: _*)
             val append = buffer.isDefined
             while (rs.next) {
-              val value = block(ResultSetRow(rs))
+              val row = ResultSetRow(rs)
+              val value = block(row)
+              SQLLogHandler.createRowLog(row, sql, statement.paramsForSQLLog)
               if (append) buffer.get.append(value)
             }
         }
