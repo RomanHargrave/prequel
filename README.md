@@ -37,15 +37,21 @@ This is an example:
     prequelous.time=true
     # will print executable or not SQL (default true)
     prequelous.executable-log-format=true
+    # will print the row returned by a statement
+    prequelous.row-print=true
 
-It can log executable sql, such this:
+It can, now, log executable sql, such this:
 
     2013-10-26 22:06:02,740 [main] INFO  SQLLOG - insert into float_table values(1.500000, null); - { time: 32 ms }
+
+or this:
+
+    2013-10-27 02:07:46,207 [main] INFO  SQLLOG - Cursor read for sql {select c1, c2 from float_table;} -->  {c1: 1.5, c2: null}
 
 ### TODO
 
  * External file configuration
- * log resultset values
+
 
 ### Not supported
 

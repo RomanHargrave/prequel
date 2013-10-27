@@ -109,6 +109,7 @@ object SQLFormatterImplicits {
 
   implicit def dateTime2Formattable(wrapped: DateTime) = DateTimeFormattable(wrapped)
 
+  //implicit def date2Formattable(wrapped: Date) = DateFormattable(wrapped)
   implicit def date2Formattable(wrapped: Date) = DateTimeFormattable(wrapped)
 
   implicit def duration2Formattable(wrapped: Duration) = new DurationFormattable(wrapped)
