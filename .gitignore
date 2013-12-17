@@ -3,3 +3,9 @@ target
 project/boot
 .idea
 .idea_modules
+/bin
+.cache
+.classpath
+.classpath.bak
+.project
+.settings/org.eclipse.jdt.core.prefs
