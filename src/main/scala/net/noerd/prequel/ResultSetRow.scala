@@ -42,7 +42,7 @@ class ResultSetRow(val rs: ResultSet) {
 
   def nextBlob: Option[java.io.InputStream] = nextValueOption(rs.getBinaryStream)
 
-  def nextClob: Option[java.io.InputStream] = nextValueOption(rs.getAsciiStream)
+  def nextClob: Option[java.io.Reader] = nextValueOption(rs.getCharacterStream)
 
   def columnBoolean(columnName: String): Option[ Boolean ] = columnValueOption(columnName, rs.getBoolean )
 
@@ -64,7 +64,7 @@ class ResultSetRow(val rs: ResultSet) {
 
   def columnBlob(columnName: String): Option[java.io.InputStream] = columnValueOption(columnName, rs.getBinaryStream)
 
-  def columnClob(columnName: String): Option[java.io.InputStream] = columnValueOption(columnName, rs.getAsciiStream)
+  def columnClob(columnName: String): Option[java.io.Reader] = columnValueOption(columnName, rs.getCharacterStream)
 
 
   val columnNames: ArrayBuffer[String] = {
@@ -184,9 +184,9 @@ object ResultSetRowImplicits {
 
   implicit def row2BinaryOption(row: ResultSetRow) = BinaryColumnType(row).nextValueOption
 
-  implicit def row2InputStreamOption(row: ResultSetRow) = BlobColumnType(row).nextValue
+  implicit def row2InputStreamOption(row: ResultSetRow) = BlobColumnType(row).nextValueOption
 
-  implicit def row2CharacterInputStreamOption(row: ResultSetRow) = ClobColumnType(row).nextValue
+  implicit def row2CharacterInputStreamOption(row: ResultSetRow) = ClobColumnType(row).nextValueOption
 }
 
 object ResultSetRowColumnImplicits {

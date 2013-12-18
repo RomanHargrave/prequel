@@ -286,7 +286,7 @@ final case class Database(val jndiNameOrConnection: Any) {
    * @throws SQLException if the value in the first column could not be interpreted as a java.io.InputStream
    * @throws NoSuchElementException if the query did not return any records.
    */
-  def selectClob(sql: String, params: Formattable*): java.io.InputStream = {
+  def selectClob(sql: String, params: Formattable*): java.io.Reader = {
     selectHead(sql, params.toSeq: _*)(row2CharacterInputStream)
   }
 
