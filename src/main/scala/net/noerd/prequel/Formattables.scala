@@ -75,6 +75,24 @@ object StringFormattable {
   def apply(value: String) = new StringFormattable(value)
 }
 
+class StringFormattableOption(val value: Option[String]) extends Formattable {
+  override def escaped(formatter: SQLFormatter): String = {
+    formatter.toSQLString(value.getOrElse(""))
+  }
+
+  override def addTo(statement: ReusableStatement): Unit = {
+    value match {
+      case Some(s) =>  statement.addString(s)
+      case None => statement.addNull
+    }
+   
+  }
+}
+
+object StringFormattableOption {
+  def apply(value: Option[String]) = new StringFormattableOption(value)
+}
+
 //
 // Boolean
 // 
@@ -90,6 +108,20 @@ object BooleanFormattable {
   def apply(value: Boolean) = new BooleanFormattable(value)
 }
 
+class BooleanFormattableOption(val value: Option[Boolean]) extends Formattable {
+  override def escaped(formatter: SQLFormatter): String = value.toString
+
+  override def addTo(statement: ReusableStatement): Unit = {
+   value match {
+      case Some(b) =>  statement.addBoolean(b)
+      case None => statement.addNull
+    }
+  }
+}
+
+object BooleanFormattableOption {
+  def apply(value: Option[Boolean]) = new BooleanFormattableOption(value)
+}
 //
 // Long
 //
@@ -105,6 +137,20 @@ object LongFormattable {
   def apply(value: Long) = new LongFormattable(value)
 }
 
+class LongFormattableOption(val value: Option[Long]) extends Formattable {
+  override def escaped(formatter: SQLFormatter): String = value.toString
+
+  override def addTo(statement: ReusableStatement): Unit = {
+   value match {
+      case Some(l) =>  statement.addLong(l)
+      case None => statement.addNull
+    }
+  }
+}
+
+object LongFormattableOption {
+  def apply(value: Option[Long]) = new LongFormattableOption(value)
+}
 //
 // Int
 //
@@ -120,6 +166,20 @@ object IntFormattable {
   def apply(value: Int) = new IntFormattable(value)
 }
 
+class IntFormattableOption(val value: Option[Int]) extends Formattable {
+  override def escaped(formatter: SQLFormatter): String = value.toString
+
+  override def addTo(statement: ReusableStatement): Unit = {
+    value match {
+      case Some(i) =>  statement.addInt(i)
+      case None => statement.addNull
+    }
+  }
+}
+
+object IntFormattableOption {
+  def apply(value: Option[Int]) = new IntFormattableOption(value)
+}
 //
 // Float
 //
@@ -135,6 +195,24 @@ object FloatFormattable {
   def apply(value: Float) = new FloatFormattable(value)
 }
 
+class FloatFormattableOption(val value: Option[Float]) extends Formattable {
+  override def escaped(formatter: SQLFormatter): String = 
+    value match {
+    case Some(f) => "%f".formatLocal(Locale.US, f)
+    case None => ""
+  }
+
+  override def addTo(statement: ReusableStatement): Unit = {
+     value match {
+      case Some(f) =>  statement.addFloat(f)
+      case None => statement.addNull
+    }
+  }
+}
+
+object FloatFormattableOption {
+  def apply(value: Option[Float]) = new FloatFormattableOption(value)
+}
 //
 // Double
 //
@@ -150,6 +228,24 @@ object DoubleFormattable {
   def apply(value: Double) = new DoubleFormattable(value)
 }
 
+class DoubleFormattableOption(val value: Option[Double]) extends Formattable {
+  override def escaped(formatter: SQLFormatter): String = 
+ value match {
+    case Some(d) => "%f".formatLocal(Locale.US, d)
+    case None => ""
+  }
+
+  override def addTo(statement: ReusableStatement): Unit = {
+    value match {
+      case Some(d) =>  statement.addDouble(d)
+      case None => statement.addNull
+    }
+  }
+}
+
+object DoubleFormattableOption {
+  def apply(value: Option[Double]) = new DoubleFormattableOption(value)
+}
 //
 // DateTime
 //
@@ -174,29 +270,65 @@ object DateTimeFormattable {
   }
 }
 
-//
-// Date
-//
-/*class DateFormattable(val value: Date)
+class DateTimeFormattableOption(val value: Option[DateTime])
   extends Formattable {
   override def escaped(formatter: SQLFormatter): String = {
-    value.getTime.toString
+    value match {
+      case Some(datetime) => formatter.toSQLString(formatter.timeStampFormatter.print(datetime))
+      case None => ""
+    }
+    
   }
 
   override def addTo(statement: ReusableStatement): Unit = {
-    statement.addDate(new java.sql.Date(value.getTime))
+    value match {
+      case Some(d) =>  statement.addDateTime(d)
+      case None => statement.addNull
+    }
   }
 }
 
-object DateFormattable {
-  def apply(value: DateTime) = {
-    new DateTimeFormattable(value)
+object DateTimeFormattableOption {
+  
+  def apply(value: Option[DateTime]) = {
+    new DateTimeFormattableOption(value)
   }
 
-  def apply(value: Date) = {
-    new DateFormattable(value)
+  
+}
+
+// Option[Date]
+
+class DateFormattableOption(val value: Option[Date])
+  extends Formattable {
+  override def escaped(formatter: SQLFormatter): String = {
+    value match {
+      case Some(datetime) => formatter.toSQLString(formatter.timeStampFormatter.print(datetime.getTime))
+      case None => ""
+    }
   }
-} */
+
+  override def addTo(statement: ReusableStatement): Unit = {
+   value match {
+      case Some(d) =>  statement.addDateTime(new DateTime(d))
+      case None => statement.addNull
+    }
+  }
+}
+
+object DateFormattableOption {  
+
+  def apply(value: Option[Date]) = {
+    value match {
+      case Some(date) => 
+        val dateTime = new DateTime(date)
+        new DateTimeFormattableOption(Some(dateTime))
+      case None => new DateTimeFormattableOption(None)
+    }
+        
+  
+  }
+} 
 
 //
 // Duration
@@ -217,6 +349,26 @@ object DurationFormattable {
   def apply(value: Duration) = new DurationFormattable(value)
 }
 
+class DurationFormattableOption(val value: Option[Duration])
+  extends Formattable {
+  override def escaped(formatter: SQLFormatter): String = 
+    value match {
+    case Some(d) => d.getMillis.toString
+    case None => ""
+  }
+    
+
+  override def addTo(statement: ReusableStatement): Unit = {
+    value match {
+      case Some(d) =>  statement.addLong(d.getMillis)
+      case None => statement.addNull
+    }
+  }
+}
+
+object DurationFormattableOption {
+  def apply(value: Option[Duration]) = new DurationFormattableOption(value)
+}
 //
 // Binary
 //
@@ -234,6 +386,26 @@ object BinaryFormattable {
   def apply(value: Array[Byte]) = new BinaryFormattable(value)
 }
 
+class BinaryFormattableOption(val value: Option[Array[Byte]]) extends Formattable {
+  override def escaped(formatter: SQLFormatter): String = {
+    value match {
+      case Some(a) => formatter.toSQLString(formatter.binaryFormatter.print(a))
+      case None => ""
+    }
+    
+  }
+
+  override def addTo(statement: ReusableStatement): Unit = {
+    value match {
+      case Some(a) =>  statement.addBinary(a)
+      case None => statement.addNull
+    }
+  }
+}
+
+object BinaryFormattableOption {
+  def apply(value: Option[Array[Byte]]) = new BinaryFormattableOption(value)
+}
 //
 // Blob
 //
@@ -251,10 +423,29 @@ class BlobFormattable(val value: java.io.InputStream) extends Formattable {
   }
 }
 
+object BlobFormattableOption {
+  def apply(value: Option[java.io.InputStream]) = new BlobFormattableOption(value)
+}
+
+class BlobFormattableOption(val value: Option[java.io.InputStream]) extends Formattable {
+  override def escaped(formatter: SQLFormatter): String = value.toString
+
+  /*{
+      formatter.toSQLString(formatter.binaryFormatter.print(""+value.available()))
+    }*/
+  override def addTo(statement: ReusableStatement): Unit = {
+    value match {
+      case Some(inputstream) => CloseUtil.closeAfterUse(inputstream) { i =>
+        statement.addBlob(i)
+      }
+      case None => statement.addNull
+    }
+  }
+}
+
 object BlobFormattable {
   def apply(value: java.io.InputStream) = new BlobFormattable(value)
 }
-
 
 //
 // Clob
@@ -275,6 +466,28 @@ class ClobFormattable(val value: java.io.Reader) extends Formattable {
 
 object ClobFormattable {
   def apply(value: java.io.Reader) = new ClobFormattable(value)
+}
+
+class ClobFormattableOption(val value: Option[java.io.Reader]) extends Formattable {
+  override def escaped(formatter: SQLFormatter): String = value.toString
+
+  /*{
+      formatter.toSQLString(formatter.binaryFormatter.print(""+value.available()))
+    }*/
+  override def addTo(statement: ReusableStatement): Unit = {
+    value match {
+      case Some(reader) => CloseUtil.closeAfterUse(reader) { r =>
+        statement.addClob(r)
+      }
+      case None => statement.addNull
+    }
+    
+    
+  }
+}
+
+object ClobFormattableOption {
+  def apply(value: Option[java.io.Reader]) = new ClobFormattableOption(value)
 }
 
 /*class ListFormattable[A](val list: List[A]) extends Formattable {

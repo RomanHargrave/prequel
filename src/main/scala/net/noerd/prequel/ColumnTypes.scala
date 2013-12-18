@@ -141,11 +141,11 @@ object BlobColumnType extends ColumnTypeFactory[java.io.InputStream] {
 // Clob
 //
 
-class ClobColumnType(row: ResultSetRow) extends ColumnType[java.io.InputStream] {
-  override def nextValueOption: Option[java.io.InputStream] = row.nextClob
-  override def columnValueOption(columnName: String): Option[java.io.InputStream] = row.columnBlob(columnName)
+class ClobColumnType(row: ResultSetRow) extends ColumnType[java.io.Reader] {
+  override def nextValueOption: Option[java.io.Reader] = row.nextClob
+  override def columnValueOption(columnName: String): Option[java.io.Reader] = row.columnClob(columnName)
 }
 
-object ClobColumnType extends ColumnTypeFactory[java.io.InputStream] {
+object ClobColumnType extends ColumnTypeFactory[java.io.Reader] {
   def apply(row: ResultSetRow) = new ClobColumnType(row)
 }

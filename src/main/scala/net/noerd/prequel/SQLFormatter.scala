@@ -96,29 +96,42 @@ class BinaryFormatter {
 
 object SQLFormatterImplicits {
   implicit def string2Formattable(wrapped: String) = StringFormattable(wrapped)
+  implicit def string2FormattableOption(wrapped: Option[String]) = StringFormattableOption(wrapped)
 
   implicit def boolean2Formattable(wrapped: Boolean) = BooleanFormattable(wrapped)
+  implicit def boolean2FormattableOption(wrapped: Option[Boolean]) = BooleanFormattableOption(wrapped)
 
   implicit def long2Formattable(wrapped: Long) = LongFormattable(wrapped)
+  implicit def long2FormattableOption(wrapped: Option[Long]) = LongFormattableOption(wrapped)
 
   implicit def int2Formattable(wrapped: Int) = IntFormattable(wrapped)
+  implicit def int2FormattableOption(wrapped: Option[Int]) = IntFormattableOption(wrapped)
 
   implicit def float2Formattable(wrapped: Float) = FloatFormattable(wrapped)
+  implicit def float2FormattableOption(wrapped: Option[Float]) = FloatFormattableOption(wrapped)
 
   implicit def double2Formattable(wrapped: Double) = DoubleFormattable(wrapped)
+  implicit def double2FormattableOption(wrapped: Option[Double]) = DoubleFormattableOption(wrapped)
 
   implicit def dateTime2Formattable(wrapped: DateTime) = DateTimeFormattable(wrapped)
+  implicit def dateTime2FormattableOption(wrapped: Option[DateTime]) = DateTimeFormattableOption(wrapped)
 
   //implicit def date2Formattable(wrapped: Date) = DateFormattable(wrapped)
   implicit def date2Formattable(wrapped: Date) = DateTimeFormattable(wrapped)
+  implicit def date2FormattableOption(wrapped: Option[Date]) = DateFormattableOption(wrapped)
 
   implicit def duration2Formattable(wrapped: Duration) = new DurationFormattable(wrapped)
+  implicit def duration2FormattableOption(wrapped: Option[Duration]) = new DurationFormattableOption(wrapped)
 
   implicit def binary2Formattable(wrapped: Array[Byte]) = new BinaryFormattable(wrapped)
+  implicit def binary2FormattableOption(wrapped: Option[Array[Byte]]) = new BinaryFormattableOption(wrapped)
 
   implicit def blob2Formattable[A](wrapped: java.io.InputStream) = new BlobFormattable(wrapped)
-
+  implicit def blob2FormattableOption[A](wrapped: Option[java.io.InputStream]) = new BlobFormattableOption(wrapped)
+  
   implicit def clob2Formattable[A](wrapped: java.io.Reader) = new ClobFormattable(wrapped)
-
+  implicit def clob2FormattableOption[A](wrapped: Option[java.io.Reader]) = new ClobFormattableOption(wrapped)
+    
   implicit def null2Formattable[A](wrapped: Option[Formattable]) = new Nullable(wrapped)
+    
 }
