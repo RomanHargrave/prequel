@@ -45,7 +45,7 @@ class ReusableStatement(val wrapped: PreparedStatement, formatter: SQLFormatter)
     val t0 = System.nanoTime
     val r = f
     val t1 = System.nanoTime
-    timeElapsed = " - { time: " + ((t1 - t0) / 1000) + " ms }"
+    timeElapsed = " - { time: " + ((t1 - t0) / 1000000) + " ms }"
     (r, t1 - t0)
   }
 

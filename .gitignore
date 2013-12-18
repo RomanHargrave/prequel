@@ -12,3 +12,4 @@ project/boot
 .fatjar
 prequelous_fat_hotfix_V3.0.3.jar
 src/test/scala/net/noerd/prequel/SomeTestsNoJunit.scala
+prequelous_V0.4.jar
