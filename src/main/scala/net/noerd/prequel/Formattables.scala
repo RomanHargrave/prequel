@@ -416,10 +416,10 @@ class BlobFormattable(val value: java.io.InputStream) extends Formattable {
       formatter.toSQLString(formatter.binaryFormatter.print(""+value.available()))
     }*/
   override def addTo(statement: ReusableStatement): Unit = {
-    CloseUtil.closeAfterUse(value) {
-      value =>
+    //CloseUtil.closeAfterUse(value) {
+    //  value =>
         statement.addBlob(value)
-    }
+    //}
   }
 }
 
@@ -435,9 +435,9 @@ class BlobFormattableOption(val value: Option[java.io.InputStream]) extends Form
     }*/
   override def addTo(statement: ReusableStatement): Unit = {
     value match {
-      case Some(inputstream) => CloseUtil.closeAfterUse(inputstream) { i =>
-        statement.addBlob(i)
-      }
+      case Some(inputstream) => //CloseUtil.closeAfterUse(inputstream) { i =>
+        statement.addBlob(inputstream)
+      //}
       case None => statement.addNull
     }
   }
@@ -457,10 +457,10 @@ class ClobFormattable(val value: java.io.Reader) extends Formattable {
       formatter.toSQLString(formatter.binaryFormatter.print(""+value.available()))
     }*/
   override def addTo(statement: ReusableStatement): Unit = {
-    CloseUtil.closeAfterUse(value) {
-      value =>
+    //CloseUtil.closeAfterUse(value) {
+    //  value =>
         statement.addClob(value)
-    }
+    //}
   }
 }
 
@@ -476,9 +476,9 @@ class ClobFormattableOption(val value: Option[java.io.Reader]) extends Formattab
     }*/
   override def addTo(statement: ReusableStatement): Unit = {
     value match {
-      case Some(reader) => CloseUtil.closeAfterUse(reader) { r =>
-        statement.addClob(r)
-      }
+      case Some(reader) => //CloseUtil.closeAfterUse(reader) { r =>
+        statement.addClob(reader)
+      //}
       case None => statement.addNull
     }
     
