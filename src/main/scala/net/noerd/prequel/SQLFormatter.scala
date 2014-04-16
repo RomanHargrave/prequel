@@ -50,7 +50,7 @@ class SQLFormatter(
   /**
    * Escapes  "'" and "\" in the string for use in a sql query
    */
-  def escapeString(str: String): String = escapeSql(str).replace("\\", "\\\\")
+  def escapeString(str: String): String = str.replace("'", "`").replace("\\", "\\\\")//escapeSql(str).replace("\\", "\\\\")
 
   /**
    * Quotes the passed string according to the formatter
