@@ -9,16 +9,26 @@ class ConnectionPoolsSpec extends FunSpec with ShouldMatchers with BeforeAndAfte
 
   val config1 = DatabaseConfig(
     driver = "org.hsqldb.jdbc.JDBCDriver",
-    jdbcURL = "jdbc:hsqldb:mem:config1"
+    jdbcURL = "jdbc:hsqldb:mem:config1",
+    sqlFormatter = SQLFormatter.HSQLDBSQLFormatter,
+    autoCommit = false,
+    maximumPoolSize = 1
   )
   val config1Copy = DatabaseConfig(
     driver = "org.hsqldb.jdbc.JDBCDriver",
-    jdbcURL = "jdbc:hsqldb:mem:config1"
+    jdbcURL = "jdbc:hsqldb:mem:config1",
+    sqlFormatter = SQLFormatter.HSQLDBSQLFormatter,
+    autoCommit = false,
+    maximumPoolSize = 1
   )
   val config2 = DatabaseConfig(
     driver = "org.hsqldb.jdbc.JDBCDriver",
-    jdbcURL = "jdbc:hsqldb:mem:config2"
+    jdbcURL = "jdbc:hsqldb:mem:config2",
+    sqlFormatter = SQLFormatter.HSQLDBSQLFormatter,
+    autoCommit = false,
+    maximumPoolSize = 1
   )
+
 
   override def beforeEach() = {
     ConnectionPools.reset()
@@ -28,8 +38,7 @@ class ConnectionPoolsSpec extends FunSpec with ShouldMatchers with BeforeAndAfte
 
     describe("getOrCreatePool") {
 
-      // Commented because of error in TRAVIS-CI execution but not in IDEA!!!!!
-      /*it("should create a new pool for each unique Configuration") {
+      it("should create a new pool for each unique Configuration") {
         ConnectionPools.reset
 
         ConnectionPools.getOrCreatePool(config1)
@@ -49,7 +58,7 @@ class ConnectionPoolsSpec extends FunSpec with ShouldMatchers with BeforeAndAfte
 
         ConnectionPools.getOrCreatePool(config1Copy)
         ConnectionPools.nbrOfPools should be(1)
-      } */
+      }
     }
   }
 
