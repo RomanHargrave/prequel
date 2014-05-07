@@ -157,11 +157,10 @@ Dependencies
 I've tried to keep the list of dependencies as short as possible but currently the following
 libraries are being used.
 
-* [commons-pool 1.5.5](http://commons.apache.org/pool) for general object pooling
-* [commons-dbcp 1.4](http://commons.apache.org/dbcp) for the more db specific parts of connection pools
+* [hikariCP 1.3.8](http://brettwooldridge.github.io/HikariCP/) for faster datasource operations
 * [commons-lang 2.6](http://commons.apache.org/lang) for SQL escaping
 * [joda-time 2.2](http://joda-time.sourceforge.net/) for sane support of Date and Time
-* [joda-convert 1.3.1]
+* [joda-convert 1.3.1](http://www.joda.org/joda-convert/) to aid conversion between Objects and Strings
 
 ### Testing
 
