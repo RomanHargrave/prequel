@@ -5,48 +5,37 @@ import java.util.Properties
 import scala.collection.mutable.{Map => MMap}
 import scala.collection.mutable.HashMap
 
-import org.apache.commons.dbcp.PoolableConnectionFactory
-import org.apache.commons.dbcp.DriverManagerConnectionFactory
-import org.apache.commons.dbcp.PoolingDataSource
-import org.apache.commons.pool.KeyedObjectPoolFactory
-import org.apache.commons.pool.impl.GenericObjectPool
+import com.zaxxer.hikari.{HikariConfig, HikariDataSource}
+import javax.sql.DataSource
 
 
 object ConnectionPools {
 
-  private val pools: MMap[DatabaseConfig, PoolingDataSource] = new HashMap
-  private val UserProperty = "user"
-  private val PasswordProperty = "password"
+  private val pools: MMap[DatabaseConfig, DataSource] = new HashMap
 
   def nbrOfPools = pools.size
 
-  def getOrCreatePool(config: DatabaseConfig): PoolingDataSource = pools.synchronized {
+  def getOrCreatePool(config: DatabaseConfig): DataSource = pools.synchronized {
     pools.get(config).getOrElse {
-      val connectionPool = new GenericObjectPool(
-        null, config.poolConfig.toGenericObjectPoolConfig
-      )
-      val connectionProperties = mapAsProperties(Map(
-        UserProperty -> config.username,
-        PasswordProperty -> config.password
-      ))
-      val connectionFactory = new DriverManagerConnectionFactory(
-        config.jdbcURL, connectionProperties
-      )
-      val defaultReadonly = false
-      val defaultAutoCommit = false
-      val stmtPoolFactory: KeyedObjectPoolFactory = null
-      val validationQuery = "select 1"
-      val poolableConnectionFactory = new PoolableConnectionFactory(
-        connectionFactory, connectionPool, stmtPoolFactory, validationQuery,
-        defaultReadonly, defaultAutoCommit, config.isolationLevel.id
-      )
-      val dataSource: PoolingDataSource = {
-        new PoolingDataSource(connectionPool)
+
+      val _config = new HikariConfig()
+      _config.setMaximumPoolSize(config.maximumPoolSize)
+      if (config.driver.length > 0 && config.jdbcURL.length > 0){
+        _config.setDriverClassName(config.driver)
+        _config.setJdbcUrl(config.jdbcURL)
+      }else{
+        _config.setDataSourceClassName(config.dataSourceClassName)
+        _config.addDataSourceProperty("serverName", config.serverName)
+        _config.addDataSourceProperty("port", config.serverPort)
+        _config.addDataSourceProperty("databaseName", config.databaseName)
       }
+      _config.setAutoCommit(config.autoCommit)
+      _config.addDataSourceProperty("user", config.username)
+      _config.addDataSourceProperty("password", config.password)
 
-
-      pools += ((config, dataSource))
-      dataSource
+     val ds = new HikariDataSource(_config)
+      pools += ((config, ds))
+      ds
     }
   }
 
