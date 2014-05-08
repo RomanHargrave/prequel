@@ -15,7 +15,6 @@ libraryDependencies ++= Seq(
     "org.slf4j" % "slf4j-api" % "1.7.5",
     "com.zaxxer" % "HikariCP" % "1.3.8",
     "org.javassist" % "javassist" % "3.18.1-GA"
-    
 )
 
 // Test Dependencies
