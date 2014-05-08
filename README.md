@@ -48,10 +48,7 @@ or this:
 
     2013-10-27 02:07:46,207 [main] INFO  SQLLOG - Cursor read for sql {select c1, c2 from float_table;} -->  {c1: 1.5, c2: null}
 
-### TODO
-
- * External file configuration
-
+Now it exposes a java.sql.DataSource made via the fast [hikariCP](http://brettwooldridge.github.io/HikariCP/) Connection Pool.
 
 ### Not supported
 
@@ -158,6 +155,8 @@ I've tried to keep the list of dependencies as short as possible but currently t
 libraries are being used.
 
 * [hikariCP 1.3.8](http://brettwooldridge.github.io/HikariCP/) for faster datasource operations
+* [javassist 3.18.1-GA](http://www.javassist.org) for hikariCP proxies
+* [slf4j 1.7.5](http://www.slf4j.org) for logging purposes
 * [commons-lang 2.6](http://commons.apache.org/lang) for SQL escaping
 * [joda-time 2.2](http://joda-time.sourceforge.net/) for sane support of Date and Time
 * [joda-convert 1.3.1](http://www.joda.org/joda-convert/) to aid conversion between Objects and Strings
