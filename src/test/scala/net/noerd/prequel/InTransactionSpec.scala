@@ -79,6 +79,7 @@ class InTransactionSpec extends FunSpec with ShouldMatchers with BeforeAndAfterE
         tx =>
           tx.execute("insert into intransactionspec values(?, ?)", 123, "test")
           usedConnection = tx.connection
+          sys.error("oh yes")
       }
 
       usedConnection.isClosed should be(true)
