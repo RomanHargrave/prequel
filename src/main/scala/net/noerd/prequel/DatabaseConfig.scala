@@ -50,7 +50,7 @@ final case class DatabaseConfig(
                                  val serverPort: String = "",
                                  val databaseName: String = "",
                                  val autoCommit: Boolean = false,
-                                 val maximumPoolSize: Int = 10
+                                 val maximumPoolSize: Int = 8
                                  ) {
 
   // Make sure that the class is available
