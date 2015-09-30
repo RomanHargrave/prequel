@@ -1,10 +1,10 @@
 name := "prequelous"
 
-version := "0.3"
+version := "0.3.1"
 
-organization := "net.noerd"
+organization := "info.hargrave"
 
-scalaVersion := "2.10.2"
+scalaVersion := "2.11.0"
 
 // Runtime Dependencies
 libraryDependencies ++= Seq(
@@ -19,7 +19,6 @@ libraryDependencies ++= Seq(
 // Test Dependencies
 libraryDependencies ++= Seq(
     "org.hsqldb" % "hsqldb" % "2.2.4" % "test",
-    "org.scalatest" %% "scalatest" % "1.9.1" % "test"
+    "org.scalatest" %% "scalatest" % "2.2.3" % "test"
 )
-
 
