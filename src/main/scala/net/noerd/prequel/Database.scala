@@ -26,7 +26,7 @@ object ConnectionPools {
       }else{
         _config.setDataSourceClassName(config.dataSourceClassName)
         _config.addDataSourceProperty("serverName", config.serverName)
-        _config.addDataSourceProperty("portPort", config.serverPort)
+        _config.addDataSourceProperty("serverPort", config.serverPort)
         _config.addDataSourceProperty("databaseName", config.databaseName)
       }
       _config.setAutoCommit(config.autoCommit)
