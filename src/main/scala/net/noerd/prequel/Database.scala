@@ -16,27 +16,28 @@ object ConnectionPools {
   def nbrOfPools = pools.size
 
   def getOrCreatePool(config: DatabaseConfig): DataSource = pools.synchronized {
-    pools.get(config).getOrElse {
+    pools.getOrElse(config, {
 
-      val _config = new HikariConfig()
-      _config.setMaximumPoolSize(config.maximumPoolSize)
+      val cpConfig = new HikariConfig()
+
+      cpConfig.setMaximumPoolSize(config.maximumPoolSize)
+      cpConfig.setAutoCommit(config.autoCommit)
+
       if (config.driver.length > 0 && config.jdbcURL.length > 0){
-        _config.setDriverClassName(config.driver)
-        _config.setJdbcUrl(config.jdbcURL)
+        cpConfig.setDriverClassName(config.driver)
+        cpConfig.setJdbcUrl(config.jdbcURL)
       }else{
-        _config.setDataSourceClassName(config.dataSourceClassName)
-        _config.addDataSourceProperty("serverName", config.serverName)
-        _config.addDataSourceProperty("serverPort", config.serverPort)
-        _config.addDataSourceProperty("databaseName", config.databaseName)
+        cpConfig.setDataSourceClassName(config.dataSourceClassName)
       }
-      _config.setAutoCommit(config.autoCommit)
-      _config.addDataSourceProperty("user", config.username)
-      _config.addDataSourceProperty("password", config.password)
 
-     val ds = new HikariDataSource(_config)
+      config.properties.foreach {
+        case(key, value) ⇒ cpConfig.addDataSourceProperty(key, value)
+      }
+
+     val ds = new HikariDataSource(cpConfig)
       pools += ((config, ds))
       ds
-    }
+    })
   }
 
   // Conversion method to deal with the nasty java.util.Properties class
