@@ -148,12 +148,6 @@ Database("jdbc/[Something]").select( "select id, brand, release_date from bicycl
 }
 ```
 
-Use in your Project
--------------------
-
-In the section [releases](https://github.com/vannicaruso/prequel/releases) you can download a fat jar containing this project plus all the classes needed by prequelous itself.
-
-
 Dependencies
 ------------
 
