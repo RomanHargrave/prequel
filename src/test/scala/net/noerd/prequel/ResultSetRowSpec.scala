@@ -182,5 +182,19 @@ class ResultSetRowSpec extends FunSpec with ShouldMatchers with BeforeAndAfterEa
           }
       }
     }
+
+    it("should return value1 val - test for list") {
+      database.transaction {
+        tx =>
+          val value1 = Some(3274832748932743.45)
+          val value2 = None
+          tx.execute("create table double_table3(c1 real, c2 real)")
+          tx.execute("insert into double_table3 values(?, null)", value1.get)
+          Database(tx.connection).select("select c1, c2 from double_table3 where c1 in (?)", List(3274832748932743.45)) {
+            row =>
+              row.nextDouble should equal(value1)
+          }
+      }
+    }
   }
 }

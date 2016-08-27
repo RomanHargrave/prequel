@@ -71,7 +71,7 @@ class InTransactionSpec extends FunSpec with ShouldMatchers with BeforeAndAfterE
 
     }
 
-    /*it("should close the connection after execution finished successfully") {
+    it("should close the connection after execution finished successfully") {
 
       var usedConnection: Connection = null
 
@@ -82,9 +82,9 @@ class InTransactionSpec extends FunSpec with ShouldMatchers with BeforeAndAfterE
       }
 
       usedConnection.isClosed should be(true)
-    } */
+    }
 
-    /*it("should close the connection after execution failed") {
+    it("should close the connection after execution failed") {
 
       var usedConnection: Connection = null
 
@@ -97,7 +97,7 @@ class InTransactionSpec extends FunSpec with ShouldMatchers with BeforeAndAfterE
           }
       }
       usedConnection.isClosed should be(true)
-    }*/
+    }
 
   }
 }

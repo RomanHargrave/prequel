@@ -1,9 +1,7 @@
 package net.noerd.prequel
 
 /**
- * The base for any parameter used in a sql query. Prequel comes 
- * with quite a few supported types but it's easy to extend the
- * support for custom types if needed by implementing this interface
+ * The base for any parameter used in a sql query.
  *
  * @see Formattables.scala for examples on implementations.
  * @see SQLFormatter for escaping and quoting of strings.

@@ -5,10 +5,17 @@ import java.sql.Connection.TRANSACTION_READ_COMMITTED
 import java.sql.Connection.TRANSACTION_READ_UNCOMMITTED
 import java.sql.Connection.TRANSACTION_REPEATABLE_READ
 import java.sql.Connection.TRANSACTION_SERIALIZABLE
+import java.sql.SQLException
 
-
+/**
+  * Trait to implement java enum on isolation levels
+  * @param id the isolation level
+  */
 sealed abstract class TransactionIsolation(val id: Int)
 
+/**
+  * Isolation levels
+  */
 object IsolationLevels {
 
   case object None extends TransactionIsolation(TRANSACTION_NONE)
@@ -27,30 +34,30 @@ object IsolationLevels {
  * Configures how to connect to the database and how the connection
  * should then be pooled.
  *
- * @param driver
- * @param jdbcURL
- * @param username
- * @param password
- * @param isolationLevel
- * @param sqlFormatter
- * @param dataSourceClassName
- * @param serverName
- * @param serverPort
- * @param databaseName
+ * @param driver the driver classname
+ * @param jdbcURL the database url string
+ * @param username username to acces the database
+ * @param password user password
+ * @param isolationLevel sets the connection isolation level
+ * @param sqlFormatter the formatter object used to format sql strings
+ * @param dataSourceClassName the class name of the datasource
+ * @param serverName the db server name
+ * @param serverPort the db server port
+ * @param databaseName the database name
  */
 final case class DatabaseConfig(
-                                 val driver: String = "",
-                                 val jdbcURL: String = "",
-                                 val username: String = "",
-                                 val password: String = "",
-                                 val isolationLevel: TransactionIsolation = IsolationLevels.ReadCommitted,
-                                 val sqlFormatter: SQLFormatter = SQLFormatter.DefaultSQLFormatter,
-                                 val dataSourceClassName: String = "",
-                                 val serverName: String = "",
-                                 val serverPort: String = "",
-                                 val databaseName: String = "",
-                                 val autoCommit: Boolean = false,
-                                 val maximumPoolSize: Int = 8
+                                 driver: String = "",
+                                 jdbcURL: String = "",
+                                 username: String = "",
+                                 password: String = "",
+                                 isolationLevel: TransactionIsolation = IsolationLevels.ReadCommitted,
+                                 sqlFormatter: SQLFormatter = SQLFormatter.DefaultSQLFormatter,
+                                 dataSourceClassName: String = "",
+                                 serverName: String = "",
+                                 serverPort: String = "",
+                                 databaseName: String = "",
+                                 autoCommit: Boolean = false,
+                                 maximumPoolSize: Int = 8
                                  ) {
 
   // Make sure that the class is available
@@ -66,7 +73,7 @@ final case class DatabaseConfig(
    *
    * @throws Any Exception that the block may generate.
    * @throws SQLException if the connection could not be committed, rollbacked
-   *                      or closed.
+   *             or closed.
    */
   def transaction[T](block: (Transaction) => T) = InTransaction(block, this)
 }

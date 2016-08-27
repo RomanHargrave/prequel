@@ -7,14 +7,14 @@ package net.noerd.prequel
  */
 trait ColumnType[T] {
   /**
-   * @throws RunTimeException if the value was null
+   * @throws RuntimeException if the value was null
    */
   def nextValue: T = nextValueOption.getOrElse(
     sys.error("unexpected null value")
   )
 
   /**
-   * @throws RunTimeException if the value was null
+   * @throws RuntimeException if the value was null
    */
   def columnValue(columnName: String): T = columnValueOption(columnName).getOrElse(
     sys.error( "unexpected null value")

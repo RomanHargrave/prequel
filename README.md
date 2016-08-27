@@ -140,6 +140,14 @@ Database("jdbc/[Something]").select( "select id, brand, release_date from bicycl
 }
 ```
 
+## Use lists to pass IN parameters with only one question mark
+
+```scala
+Database("jdbc/[Something]").select( "select id, brand, release_date from bicycles where id in (?)", List(1) ) { r =>
+  Bicycle( r, r, r )
+}
+```
+
 Use in your Project
 -------------------
 

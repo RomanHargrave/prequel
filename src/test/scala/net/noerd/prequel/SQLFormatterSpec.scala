@@ -17,7 +17,16 @@ class SQLFormatterSpec extends FunSpec with ShouldMatchers {
         "insert into ??( c1, c3, c4) values( ?, ?, ? )",
         Identifier("testtable"), 234, "test", Duration.standardMinutes(65)
       )
+      println(actual)
+      actual should equal(expected)
+    }
+  }
 
+  describe("SQLFormatter with lists"){
+    it("should combine the parameters in the query") {
+      val expected = "select count(*) from testtable where c1 in (?)"
+      val (actual, _) = DefaultSQLFormatter.format("select count(*) from testtable where c1 in (?)", List(234))
+      println(actual)
       actual should equal(expected)
     }
   }

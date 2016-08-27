@@ -3,12 +3,12 @@ package net.noerd.prequel
 import java.util.Date
 
 import org.apache.commons.lang.StringEscapeUtils.escapeSql
-
 import org.joda.time.DateTime
 import org.joda.time.Duration
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
 import org.joda.time.format.ISODateTimeFormat
+
 import scala.util.matching.Regex.Match
 import java.util.regex.Matcher
 
@@ -133,5 +133,6 @@ object SQLFormatterImplicits {
   implicit def clob2FormattableOption[A](wrapped: Option[java.io.Reader]) = new ClobFormattableOption(wrapped)
     
   implicit def null2Formattable[A](wrapped: Option[Formattable]) = new Nullable(wrapped)
-    
+
+  implicit def list2Formattable[A](wrapped: List[A]) = new ListFormattable(wrapped)
 }

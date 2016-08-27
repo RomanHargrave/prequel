@@ -1,10 +1,10 @@
 name := "prequelous"
 
-version := "0.3"
+version := "0.5"
 
-organization := "net.noerd"
+organization := "it.vannicaruso"
 
-scalaVersion := "2.10.2"
+scalaVersion := "2.11.7"
 
 // Runtime Dependencies
 libraryDependencies ++= Seq(
@@ -14,12 +14,14 @@ libraryDependencies ++= Seq(
     "org.slf4j" % "slf4j-api" % "1.7.5",
     "com.zaxxer" % "HikariCP" % "1.3.8",
     "org.javassist" % "javassist" % "3.18.1-GA"
+
 )
 
 // Test Dependencies
 libraryDependencies ++= Seq(
     "org.hsqldb" % "hsqldb" % "2.2.4" % "test",
-    "org.scalatest" %% "scalatest" % "1.9.1" % "test"
+    "org.scalactic" %% "scalactic" % "2.2.6" % "test",
+    "org.scalatest" %% "scalatest" % "2.2.6" % "test"
 )
 
 

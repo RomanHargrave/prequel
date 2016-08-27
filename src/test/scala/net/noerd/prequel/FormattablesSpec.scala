@@ -1,10 +1,9 @@
 package net.noerd.prequel
 
-import org.joda.time.Duration
-
+import org.joda.time.{DateTime, Duration}
 import org.scalatest.FunSpec
 import org.scalatest.matchers.ShouldMatchers
-import java.util.Locale
+import java.util.{Date, Locale}
 
 class FormattablesSpec extends FunSpec with ShouldMatchers {
 
@@ -53,6 +52,21 @@ class FormattablesSpec extends FunSpec with ShouldMatchers {
     ("BinaryFormattable should escape and convert defined formattable to hexadecimal format",
       BinaryFormattable("Lorem Ipsum".getBytes),
       "'4C6F72656D20497073756D'"
+      ),
+    ("ListFormattable should escape 'foo','bar','baz' as IN parameters",
+      ListFormattable(List("foo", "bar", "baz")), "'foo','bar','baz'"
+      ),
+    ("ListFormattable should escape 1,2,3 as IN parameters",
+      ListFormattable(List(1,2,3)), "1,2,3"
+      ),
+    ("ListFormattable should escape '2016-08-27 18:39:00.0000' as IN parameters",
+      ListFormattable(List(new DateTime(2016, 8, 27, 18, 39))), "'2016-08-27 18:39:00.0000'"
+      ),
+    ("ListFormattable should escape '2016-08-28 18:39:00.0000' as IN parameters",
+      ListFormattable(List(new Date(116, 7, 28, 18, 39))), "'2016-08-28 18:39:00.0000'"
+      ),
+    ("ListFormattable should escape 1.0,2.0,3.0 as IN parameters",
+      ListFormattable(List(1.0,2.0,3.0)), "1.0,2.0,3.0"
       )
   )
 

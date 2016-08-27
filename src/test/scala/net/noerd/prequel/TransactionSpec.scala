@@ -227,6 +227,8 @@ class TransactionSpec extends FunSpec with ShouldMatchers with BeforeAndAfterEac
             val normalTiming = normalExecute(sql, items, tx)
             val batchTiming = executeBatch(sql, items, tx)
             val difference: Double = normalTiming / batchTiming
+            println(s"normal time: $normalTiming")
+            println(s"batch time: $batchTiming")
             println("executing " + size + " made a difference of " + (difference * 100) + "%")
             difference should be > (1.0)
         }
