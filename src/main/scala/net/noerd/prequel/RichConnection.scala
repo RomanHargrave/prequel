@@ -1,10 +1,9 @@
 package net.noerd.prequel
 
-import java.sql.Connection
-import java.sql.Statement
+import java.sql.{CallableStatement, Connection, ResultSet, Statement}
 import java.sql.Statement.RETURN_GENERATED_KEYS
 import java.sql.Statement.NO_GENERATED_KEYS
-import java.sql.ResultSet
+
 import org.slf4j.LoggerFactory
 
 
@@ -68,6 +67,27 @@ private[prequel] class RichConnection(val wrapped: Connection) {
         SQLLogHandler.createLogEntry(sql, statement.paramsForSQLLog, statement.timeElapsed)
       else
         SQLLogHandler.createLogEntry(sql, statement.paramsToLog, statement.timeElapsed)
+      statement.close()
+    }
+  }
+
+  /**
+    * Creates a new callablestatement to call functions or stored procedures.
+    * The statement is automatically closed once the block has finished.
+    */
+  def usingCallableStatement[T](functionOrProcedureCall: String)(block: (CallableStatement) => T): T = {
+    val statement = wrapped.prepareCall(functionOrProcedureCall)
+
+    try {
+      block(statement)
+    } catch {
+      case th: Throwable => {
+        logger.error(th.getLocalizedMessage, th)
+        throw th
+      }
+    }
+    finally {
+      // This also closes the resultset
       statement.close()
     }
   }

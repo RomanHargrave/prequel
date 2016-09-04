@@ -1,7 +1,6 @@
 package net.noerd.prequel
 
-import java.sql.SQLException
-
+import java.sql.{SQLException, Types}
 
 import org.scalatest.FunSpec
 import org.scalatest.matchers.ShouldMatchers
@@ -19,11 +18,26 @@ class TransactionSpec extends FunSpec with ShouldMatchers with BeforeAndAfterEac
       tx.execute("insert into transactionspec values(?, ?)", 242, "test1")
       tx.execute("insert into transactionspec values(?, ?)", 23, "test2")
       tx.execute("insert into transactionspec values(?, ?)", 42, "test3")
+      tx.execute("CREATE PROCEDURE\n " +
+        "new_transactionspec(IN id int, \n" +
+        "IN name VARCHAR(265), OUT temp_id1 INTEGER)     MODIFIES SQL DATA\n" +
+        "   BEGIN ATOMIC\n     " +
+        "DECLARE temp_id INTEGER;\n     " +
+        "INSERT INTO transactionspec " +
+        "VALUES " +
+        "(12345, name);\n     " +
+        "SET temp_id = IDENTITY();\n     " +
+        "SET temp_id1 = 12345 ;\n" +
+        "END")
+      tx.execute("CREATE FUNCTION an_hour_before(t TIMESTAMP)\n  RETURNS TIMESTAMP\n  RETURN t - 1 HOUR")
   }
 
   override def afterEach() = database.transaction {
     tx =>
+      tx.execute("drop function an_hour_before")
+      tx.execute("drop procedure new_transactionspec")
       tx.execute("drop table transactionspec")
+
   }
 
   describe("Transaction") {
@@ -255,6 +269,24 @@ class TransactionSpec extends FunSpec with ShouldMatchers with BeforeAndAfterEac
 
           rs should contain (items.head)
           rs should contain (items.last)
+        }
+      }
+    }
+    describe("Procedures and functions"){
+      it ("should call properly the stored procedure and return 12345"){
+        database.transaction{
+          tx =>
+            val l = tx.callProcedure("call new_transactionspec(?, ?, ?)", ParameterIn(Some(10000), Types.INTEGER), ParameterIn(Some("pippo"), Types.VARCHAR),ParameterOut(Types.INTEGER))
+            l should equal (List(12345))
+        }
+      }
+
+      it ("should call properly the function and return the correct time"){
+        database.transaction{
+          tx =>
+            val timestamp = new java.sql.Timestamp(new java.util.Date().getTime)
+            val l = tx.callFunction("{call an_hour_before(?)}", ParameterIn(Some(timestamp), Types.TIMESTAMP))
+            println(l)
         }
       }
 

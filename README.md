@@ -148,6 +148,27 @@ Database("jdbc/[Something]").select( "select id, brand, release_date from bicycl
 }
 ```
 
+## Very first implementation of callable statements (needs more tests!!!)
+Added the solution provided by [zbeckman](https://github.com/zbeckman/) on [stackoverflow](http://stackoverflow.com/questions/30291124/how-to-call-a-stored-procedure-and-get-return-value-in-slick-using-scala/), see the test for more implementation details
+
+```scala
+database.transaction{
+   tx =>
+     val l = tx.callProcedure("call new_transactionspec(?, ?, ?)", ParameterIn(Some(10000), Types.INTEGER), ParameterIn(Some("pippo"), Types.VARCHAR),ParameterOut(Types.INTEGER))
+     // do something with - eventually produced - result...
+   }
+}
+
+database.transaction{
+    tx =>
+      val timestamp = new java.sql.Timestamp(new java.util.Date().getTime)
+      val l = tx.callFunction("{call an_hour_before(?)}", ParameterIn(Some(timestamp), Types.TIMESTAMP))
+      // do something with result ...
+    }
+```
+
+TODO: return one or more resultsets.
+
 Dependencies
 ------------
 
