@@ -40,6 +40,8 @@ class ResultSetRow(val rs: ResultSet) {
 
   def nextBinary: Option[Array[Byte]] = nextValueOption(rs.getBytes)
 
+  def nextArray: Option[java.sql.Array] = nextValueOption(rs.getArray)
+
   def nextBlob: Option[java.io.InputStream] = nextValueOption(rs.getBinaryStream)
 
   def nextClob: Option[java.io.Reader] = nextValueOption(rs.getCharacterStream)
