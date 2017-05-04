@@ -4,7 +4,7 @@ version := "0.5"
 
 organization := "it.vannicaruso"
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.12.2"
 
 // Runtime Dependencies
 libraryDependencies ++= Seq(
@@ -14,14 +14,13 @@ libraryDependencies ++= Seq(
     "org.slf4j" % "slf4j-api" % "1.7.5",
     "com.zaxxer" % "HikariCP" % "1.3.8",
     "org.javassist" % "javassist" % "3.18.1-GA"
-
 )
 
 // Test Dependencies
 libraryDependencies ++= Seq(
     "org.hsqldb" % "hsqldb" % "2.2.4" % "test",
-    "org.scalactic" %% "scalactic" % "2.2.6" % "test",
-    "org.scalatest" %% "scalatest" % "2.2.6" % "test"
+    "org.scalactic" %% "scalactic" % "3.0.3" % "test",
+    "org.scalatest" %% "scalatest" % "3.0.3" % "test"
 )
 
 

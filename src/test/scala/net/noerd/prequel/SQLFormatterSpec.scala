@@ -1,13 +1,11 @@
 package net.noerd.prequel
 
 import org.joda.time.Duration
-
-import org.scalatest.FunSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.{FunSpec, Matchers}
 import net.noerd.prequel.SQLFormatter.DefaultSQLFormatter
 import net.noerd.prequel.SQLFormatterImplicits._
 
-class SQLFormatterSpec extends FunSpec with ShouldMatchers {
+class SQLFormatterSpec extends FunSpec with Matchers {
 
   describe("SQLFormatter") {
     it("should combine the parameters with the query") {

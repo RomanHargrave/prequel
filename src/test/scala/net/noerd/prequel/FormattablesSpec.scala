@@ -2,10 +2,10 @@ package net.noerd.prequel
 
 import org.joda.time.{DateTime, Duration}
 import org.scalatest.FunSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import java.util.{Date, Locale}
 
-class FormattablesSpec extends FunSpec with ShouldMatchers {
+class FormattablesSpec extends FunSpec with Matchers {
 
   val formatter = SQLFormatter.HSQLDBSQLFormatter
   val formattables = List(

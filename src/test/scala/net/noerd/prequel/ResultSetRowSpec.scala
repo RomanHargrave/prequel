@@ -3,12 +3,12 @@ package net.noerd.prequel
 import java.util.Date
 
 import org.scalatest.FunSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.scalatest.BeforeAndAfterEach
 import net.noerd.prequel.SQLFormatterImplicits._
 import java.sql.Timestamp
 
-class ResultSetRowSpec extends FunSpec with ShouldMatchers with BeforeAndAfterEach {
+class ResultSetRowSpec extends FunSpec with Matchers with BeforeAndAfterEach {
 
   val database = TestDatabase.config
 

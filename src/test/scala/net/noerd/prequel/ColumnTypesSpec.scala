@@ -4,10 +4,10 @@ import org.joda.time.DateTime
 import org.joda.time.Duration
 
 import org.scalatest.FunSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 
-trait ColumnTypeSpec[T] extends FunSpec with ShouldMatchers {
+trait ColumnTypeSpec[T] extends FunSpec with Matchers {
 
   val database = TestDatabase.config
   val testIdentifier = columnTypeFactory.getClass.getSimpleName.replace("$", "")

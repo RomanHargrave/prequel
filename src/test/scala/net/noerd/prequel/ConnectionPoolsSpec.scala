@@ -2,10 +2,10 @@ package net.noerd.prequel
 
 
 import org.scalatest.FunSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.scalatest.BeforeAndAfterEach
 
-class ConnectionPoolsSpec extends FunSpec with ShouldMatchers with BeforeAndAfterEach {
+class ConnectionPoolsSpec extends FunSpec with Matchers with BeforeAndAfterEach {
 
   val config1 = DatabaseConfig(
     driver = "org.hsqldb.jdbc.JDBCDriver",

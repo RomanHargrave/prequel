@@ -3,12 +3,12 @@ package net.noerd.prequel
 import java.sql.{SQLException, Types}
 
 import org.scalatest.FunSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.scalatest.BeforeAndAfterEach
 import net.noerd.prequel.SQLFormatterImplicits._
 import net.noerd.prequel.ResultSetRowImplicits._
 
-class TransactionSpec extends FunSpec with ShouldMatchers with BeforeAndAfterEach {
+class TransactionSpec extends FunSpec with Matchers with BeforeAndAfterEach {
 
   val database = TestDatabase.config
 
