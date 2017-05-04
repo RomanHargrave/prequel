@@ -116,6 +116,16 @@ class ReusableStatement(val wrapped: PreparedStatement, formatter: SQLFormatter)
     )
   }
 
+  def addObject(value: AnyRef) = {
+    params += formatter.escapeString(value.toString) // hmm (this is based on some ancient hack I made in 2015)
+    addValue(() => wrapped.setObject(parameterIndex, value))
+  }
+
+  def addObject(value: AnyRef, sqlType: SQLType) = {
+    params += formatter.escapeString(value.toString)
+    addValue(() => wrapped.setObject(parameterIndex, value, sqlType))
+  }
+
   /**
    * Add a Date to the current parameter index. This is done by setTimestamp which
    * looses the Timezone information of the DateTime
