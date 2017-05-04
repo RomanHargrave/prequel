@@ -116,11 +116,29 @@ class ReusableStatement(val wrapped: PreparedStatement, formatter: SQLFormatter)
     )
   }
 
+  /**
+    * Add a string, unescaped, to the statement. Intended for complex data type literals or code.
+    * @param value string
+    */
+  def addRawString(value: String) = {
+    params += value
+    addValue(() => wrapped.setString(parameterIndex, value))
+  }
+
+  /**
+   * Add an object to the statement (driver-level handling)
+   * @param value   object
+   */
   def addObject(value: AnyRef) = {
-    params += formatter.escapeString(value.toString) // hmm (this is based on some ancient hack I made in 2015)
+    params += formatter.escapeString(value.toString) // TODO hmm (this is based on some ancient hack I made in 2015)
     addValue(() => wrapped.setObject(parameterIndex, value))
   }
 
+  /**
+    * Add an object to the statement, with type hint (driver-level handling)
+    * @param value    object
+    * @param sqlType  object type, in DB terms
+    */
   def addObject(value: AnyRef, sqlType: SQLType) = {
     params += formatter.escapeString(value.toString)
     addValue(() => wrapped.setObject(parameterIndex, value, sqlType))
