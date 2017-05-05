@@ -1,6 +1,6 @@
 name := "prequelous"
 
-version := "0.6"
+version := "0.7"
 
 organization := "info.hargrave"
 
