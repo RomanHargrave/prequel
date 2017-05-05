@@ -135,4 +135,16 @@ object SQLFormatterImplicits {
   implicit def null2Formattable[A](wrapped: Option[Formattable]) = new Nullable(wrapped)
 
   implicit def list2Formattable[A](wrapped: List[A]) = new ListFormattable(wrapped)
+
+  // Array implicits -- only for basic primitives. Everything elese requires explicit.
+  // man, primitives in java were a mistake
+  implicit def strArray2Formattable(w: Array[String]) = new ArrayFormattable(w, "TEXT")
+  implicit def shtArray2Formattable(w: Array[Short]) = new ArrayFormattable(w.map(short2Short), "SMALLINT")
+  implicit def intArray2Formattable(w: Array[Int]) = new ArrayFormattable(w.map(int2Integer), "INTEGER")
+  implicit def lngArray2Formattable(w: Array[Long]) = new ArrayFormattable(w.map(long2Long), "BIGINT")
+  implicit def fltArray2Formattable(w: Array[Float]) = new ArrayFormattable(w.map(float2Float), "DOUBLE")
+  implicit def dblArray2Formattable(w: Array[Double]) = new ArrayFormattable(w.map(double2Double), "DOUBLE")
+  implicit def dateArray2Formattable(w: Array[Date]) = new ArrayFormattable(w, "DATE")
+  implicit def boolArray2Formattable(w: Array[Boolean]) = new ArrayFormattable(w.map(boolean2Boolean), "BOOLEAN")
+
 }

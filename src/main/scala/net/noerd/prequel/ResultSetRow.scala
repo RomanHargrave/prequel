@@ -64,6 +64,8 @@ class ResultSetRow(val rs: ResultSet) {
 
   def columnBinary(columnName: String): Option[Array[Byte]] = columnValueOption(columnName, rs.getBytes)
 
+  def columnArray(columnName: String): Option[java.sql.Array] = columnValueOption(columnName, rs.getArray)
+
   def columnBlob(columnName: String): Option[java.io.InputStream] = columnValueOption(columnName, rs.getBinaryStream)
 
   def columnClob(columnName: String): Option[java.io.Reader] = columnValueOption(columnName, rs.getCharacterStream)
@@ -189,6 +191,24 @@ object ResultSetRowImplicits {
   implicit def row2InputStreamOption(row: ResultSetRow) = BlobColumnType(row).nextValueOption
 
   implicit def row2CharacterInputStreamOption(row: ResultSetRow) = ClobColumnType(row).nextValueOption
+
+  // Conversions for basic primives from SQL Arrays to Java Arrays
+  implicit def row2StringArrayOpt(row: ResultSetRow) = ArrayColumnType[String](row).nextValueOption
+  implicit def row2StringArray(row: ResultSetRow) = ArrayColumnType[String](row).nextValue
+  implicit def row2ShortArrayOpt(row: ResultSetRow) = ArrayColumnType[Short](row).nextValueOption
+  implicit def row2ShortArray(row: ResultSetRow) = ArrayColumnType[Short](row).nextValue
+  implicit def row2IntArrayOpt(row: ResultSetRow) = ArrayColumnType[Int](row).nextValueOption
+  implicit def row2IntArray(row: ResultSetRow) = ArrayColumnType[Int](row).nextValue
+  implicit def row2LongArrayOpt(row: ResultSetRow) = ArrayColumnType[Long](row).nextValueOption
+  implicit def row2LongArray(row: ResultSetRow) = ArrayColumnType[Long](row).nextValue
+  implicit def row2FloatArrayOpt(row: ResultSetRow) = ArrayColumnType[Float](row).nextValueOption
+  implicit def row2FloatArray(row: ResultSetRow) = ArrayColumnType[Float](row).nextValue
+  implicit def row2DoubleArrayOpt(row: ResultSetRow) = ArrayColumnType[Double](row).nextValueOption
+  implicit def row2DoubleArray(row: ResultSetRow) = ArrayColumnType[Double](row).nextValue
+  implicit def row2DateArrayOpt(row: ResultSetRow) = ArrayColumnType[Date](row).nextValueOption
+  implicit def row2DateArray(row: ResultSetRow) = ArrayColumnType[Date](row).nextValue
+  implicit def row2BooleanArrayOpt(row: ResultSetRow) = ArrayColumnType[Boolean](row).nextValueOption
+  implicit def row2BooleanArray(row: ResultSetRow) = ArrayColumnType[Boolean](row).nextValue
 }
 
 object ResultSetRowColumnImplicits {

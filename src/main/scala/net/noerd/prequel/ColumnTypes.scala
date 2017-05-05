@@ -149,3 +149,22 @@ class ClobColumnType(row: ResultSetRow) extends ColumnType[java.io.Reader] {
 object ClobColumnType extends ColumnTypeFactory[java.io.Reader] {
   def apply(row: ResultSetRow) = new ClobColumnType(row)
 }
+
+// SQL Array
+class ArrayColumnType[X](row: ResultSetRow,
+                         conv: (java.sql.Array => Array[X]))
+    extends ColumnType[Array[X]]
+{
+  override def nextValueOption: Option[Array[ X ]] =
+    row.nextArray.map(conv)
+
+  override def columnValueOption(columnName: String): Option[ Array[ X ] ] =
+    row.columnArray(columnName).map(conv)
+
+}
+
+object ArrayColumnType {
+  def apply[X](row: ResultSetRow,
+               conv: (java.sql.Array => Array[X]) = {x: java.sql.Array => x.getArray.asInstanceOf[Array[X]]}): ArrayColumnType[X] =
+    new ArrayColumnType[X](row, conv)
+}

@@ -196,5 +196,18 @@ class ResultSetRowSpec extends FunSpec with Matchers with BeforeAndAfterEach {
           }
       }
     }
+
+    it("should accept and return ARRAY[1, 2, 3, 4]") {
+      database.transaction {
+        tx =>
+          val array = Array(1, 2, 3, 4)
+          tx.execute("CREATE TABLE array_table1(a1 INT ARRAY)")
+          tx.execute("INSERT INTO array_table1 VALUES(?)", array)
+          Database(tx.connection).select("SELECT a1 FROM array_table1 LIMIT 1") {
+            row =>
+              ArrayColumnType[Int](row).nextValue should equal(array)
+          }
+      }
+    }
   }
 }

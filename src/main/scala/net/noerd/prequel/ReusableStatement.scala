@@ -152,10 +152,10 @@ class ReusableStatement(val wrapped: PreparedStatement, formatter: SQLFormatter)
     * @param value    array
     * @param typeName member type, in DB terms
     */
-  def addArray(value: Array[AnyRef], typeName: String): Unit = {
+  def addArray(value: Array[_ <: AnyRef], typeName: String): Unit = {
     displayParams += formatter.escapeString(value.toString)
     addValue(() => wrapped.setArray(parameterIndex,
-                                    wrapped.getConnection.createArrayOf(typeName, value)))
+                                    wrapped.getConnection.createArrayOf(typeName, value.asInstanceOf[Array[AnyRef]])))
   }
 
   /**
@@ -164,7 +164,7 @@ class ReusableStatement(val wrapped: PreparedStatement, formatter: SQLFormatter)
     * @param value    array
     * @param sqlType  member type
     */
-  def addArray(value: Array[AnyRef], sqlType: SQLType): Unit =
+  def addArray(value: Array[_ <: AnyRef], sqlType: SQLType): Unit =
     addArray(value, sqlType.getName)
 
   /**

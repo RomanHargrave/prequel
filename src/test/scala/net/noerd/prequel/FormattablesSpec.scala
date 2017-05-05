@@ -99,4 +99,10 @@ class FormattablesSpec extends FunSpec with Matchers {
       Locale.setDefault(oldDefaultLocale)
     }
   }
+
+  describe("ArrayFormattable") {
+     it("should emit an SQL-appearing array literals")  {
+       ArrayFormattable(Array(1, 2, 3).map(Predef.int2Integer /* JFC JVM */), "INT").escaped(formatter) should equal("ARRAY[1,2,3]")
+     }
+  }
 }

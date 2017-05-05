@@ -517,3 +517,34 @@ class ListFormattable[A](val list: List[A]) extends Formattable {
 object ListFormattable {
   def apply[A](list: List[A]) = new ListFormattable(list)
 }
+
+// SQL Array
+
+class ArrayFormattable(override val value: Array[_ <: AnyRef],
+                       val typeName: String,
+                       val delimiter: String = ",")
+  extends Formattable
+{
+
+  /**
+    * Must return a sql escaped string of the parameter
+    * -- Man, the current design isn't setup for this
+    */
+  // XXX DO NOT FEED OUTPUT TO ANYTHING BUT THE LOG (!)
+  // XXX THE OUTPUT OF Formattable.escaped SHOULD NEVER GO TO THE DB
+  // XXX ONLY Formattable.addTo() SHOULD CONTRIBUTE TO TRANSACTION DATA, AND IS CURRENTLY THE ONLY THING THAT DOES
+  override def escaped(formatter: SQLFormatter): String =
+    // TODO maybe use inferImplicit in macro context to figure out formatter for array members?
+    s"ARRAY[${value.mkString(delimiter)}]"
+
+  /**
+    * Used when doing batch inserts or updates. Should use
+    * the given ReusableStatement to add the parameter.
+    */
+  override def addTo(statement: ReusableStatement): Unit =
+    statement.addArray(value, typeName)
+}
+
+object ArrayFormattable {
+  def apply(array: Array[AnyRef], typeName: String) = new ArrayFormattable(array, typeName)
+}
