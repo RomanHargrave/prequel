@@ -6,6 +6,8 @@ organization := "info.hargrave"
 
 scalaVersion := "2.12.2"
 
+publishTo := Some(Resolver.file("file",  new File(Path.userHome.absolutePath + "/.m2/repository")))
+
 // Runtime Dependencies
 libraryDependencies ++= Seq(
     "commons-lang"  % "commons-lang"    % "2.6",
@@ -22,5 +24,3 @@ libraryDependencies ++= Seq(
     "org.scalactic" %% "scalactic"  % "3.0.3" % "test",
     "org.scalatest" %% "scalatest"  % "3.0.3" % "test"
 )
-
-
